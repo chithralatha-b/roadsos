@@ -19,6 +19,7 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as HospitalsRouteImport } from './routes/hospitals'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as AssistantRouteImport } from './routes/assistant'
+import { Route as AccidentRouteImport } from './routes/accident'
 import { Route as IndexRouteImport } from './routes/index'
 
 const VolunteersRoute = VolunteersRouteImport.update({
@@ -71,6 +72,11 @@ const AssistantRoute = AssistantRouteImport.update({
   path: '/assistant',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AccidentRoute = AccidentRouteImport.update({
+  id: '/accident',
+  path: '/accident',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -79,6 +85,7 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/accident': typeof AccidentRoute
   '/assistant': typeof AssistantRoute
   '/dashboard': typeof DashboardRoute
   '/hospitals': typeof HospitalsRoute
@@ -92,6 +99,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/accident': typeof AccidentRoute
   '/assistant': typeof AssistantRoute
   '/dashboard': typeof DashboardRoute
   '/hospitals': typeof HospitalsRoute
@@ -106,6 +114,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/accident': typeof AccidentRoute
   '/assistant': typeof AssistantRoute
   '/dashboard': typeof DashboardRoute
   '/hospitals': typeof HospitalsRoute
@@ -121,6 +130,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/accident'
     | '/assistant'
     | '/dashboard'
     | '/hospitals'
@@ -134,6 +144,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/accident'
     | '/assistant'
     | '/dashboard'
     | '/hospitals'
@@ -147,6 +158,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/accident'
     | '/assistant'
     | '/dashboard'
     | '/hospitals'
@@ -161,6 +173,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AccidentRoute: typeof AccidentRoute
   AssistantRoute: typeof AssistantRoute
   DashboardRoute: typeof DashboardRoute
   HospitalsRoute: typeof HospitalsRoute
@@ -245,6 +258,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AssistantRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/accident': {
+      id: '/accident'
+      path: '/accident'
+      fullPath: '/accident'
+      preLoaderRoute: typeof AccidentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -257,6 +277,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AccidentRoute: AccidentRoute,
   AssistantRoute: AssistantRoute,
   DashboardRoute: DashboardRoute,
   HospitalsRoute: HospitalsRoute,
