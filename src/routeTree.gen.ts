@@ -9,8 +9,86 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as VolunteersRouteImport } from './routes/volunteers'
+import { Route as TrackingRouteImport } from './routes/tracking'
+import { Route as SosRouteImport } from './routes/sos'
+import { Route as SafetyRouteImport } from './routes/safety'
+import { Route as RiskRouteImport } from './routes/risk'
+import { Route as ProfileRouteImport } from './routes/profile'
+import { Route as OnboardingRouteImport } from './routes/onboarding'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as HospitalsRouteImport } from './routes/hospitals'
+import { Route as FamilyRouteImport } from './routes/family'
+import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as AssistantRouteImport } from './routes/assistant'
+import { Route as AccidentRouteImport } from './routes/accident'
 import { Route as IndexRouteImport } from './routes/index'
 
+const VolunteersRoute = VolunteersRouteImport.update({
+  id: '/volunteers',
+  path: '/volunteers',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TrackingRoute = TrackingRouteImport.update({
+  id: '/tracking',
+  path: '/tracking',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SosRoute = SosRouteImport.update({
+  id: '/sos',
+  path: '/sos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SafetyRoute = SafetyRouteImport.update({
+  id: '/safety',
+  path: '/safety',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RiskRoute = RiskRouteImport.update({
+  id: '/risk',
+  path: '/risk',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProfileRoute = ProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OnboardingRoute = OnboardingRouteImport.update({
+  id: '/onboarding',
+  path: '/onboarding',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HospitalsRoute = HospitalsRouteImport.update({
+  id: '/hospitals',
+  path: '/hospitals',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FamilyRoute = FamilyRouteImport.update({
+  id: '/family',
+  path: '/family',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardRoute = DashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AssistantRoute = AssistantRouteImport.update({
+  id: '/assistant',
+  path: '/assistant',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AccidentRoute = AccidentRouteImport.update({
+  id: '/accident',
+  path: '/accident',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -19,28 +97,214 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/accident': typeof AccidentRoute
+  '/assistant': typeof AssistantRoute
+  '/dashboard': typeof DashboardRoute
+  '/family': typeof FamilyRoute
+  '/hospitals': typeof HospitalsRoute
+  '/login': typeof LoginRoute
+  '/onboarding': typeof OnboardingRoute
+  '/profile': typeof ProfileRoute
+  '/risk': typeof RiskRoute
+  '/safety': typeof SafetyRoute
+  '/sos': typeof SosRoute
+  '/tracking': typeof TrackingRoute
+  '/volunteers': typeof VolunteersRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/accident': typeof AccidentRoute
+  '/assistant': typeof AssistantRoute
+  '/dashboard': typeof DashboardRoute
+  '/family': typeof FamilyRoute
+  '/hospitals': typeof HospitalsRoute
+  '/login': typeof LoginRoute
+  '/onboarding': typeof OnboardingRoute
+  '/profile': typeof ProfileRoute
+  '/risk': typeof RiskRoute
+  '/safety': typeof SafetyRoute
+  '/sos': typeof SosRoute
+  '/tracking': typeof TrackingRoute
+  '/volunteers': typeof VolunteersRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/accident': typeof AccidentRoute
+  '/assistant': typeof AssistantRoute
+  '/dashboard': typeof DashboardRoute
+  '/family': typeof FamilyRoute
+  '/hospitals': typeof HospitalsRoute
+  '/login': typeof LoginRoute
+  '/onboarding': typeof OnboardingRoute
+  '/profile': typeof ProfileRoute
+  '/risk': typeof RiskRoute
+  '/safety': typeof SafetyRoute
+  '/sos': typeof SosRoute
+  '/tracking': typeof TrackingRoute
+  '/volunteers': typeof VolunteersRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/accident'
+    | '/assistant'
+    | '/dashboard'
+    | '/family'
+    | '/hospitals'
+    | '/login'
+    | '/onboarding'
+    | '/profile'
+    | '/risk'
+    | '/safety'
+    | '/sos'
+    | '/tracking'
+    | '/volunteers'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/accident'
+    | '/assistant'
+    | '/dashboard'
+    | '/family'
+    | '/hospitals'
+    | '/login'
+    | '/onboarding'
+    | '/profile'
+    | '/risk'
+    | '/safety'
+    | '/sos'
+    | '/tracking'
+    | '/volunteers'
+  id:
+    | '__root__'
+    | '/'
+    | '/accident'
+    | '/assistant'
+    | '/dashboard'
+    | '/family'
+    | '/hospitals'
+    | '/login'
+    | '/onboarding'
+    | '/profile'
+    | '/risk'
+    | '/safety'
+    | '/sos'
+    | '/tracking'
+    | '/volunteers'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AccidentRoute: typeof AccidentRoute
+  AssistantRoute: typeof AssistantRoute
+  DashboardRoute: typeof DashboardRoute
+  FamilyRoute: typeof FamilyRoute
+  HospitalsRoute: typeof HospitalsRoute
+  LoginRoute: typeof LoginRoute
+  OnboardingRoute: typeof OnboardingRoute
+  ProfileRoute: typeof ProfileRoute
+  RiskRoute: typeof RiskRoute
+  SafetyRoute: typeof SafetyRoute
+  SosRoute: typeof SosRoute
+  TrackingRoute: typeof TrackingRoute
+  VolunteersRoute: typeof VolunteersRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/volunteers': {
+      id: '/volunteers'
+      path: '/volunteers'
+      fullPath: '/volunteers'
+      preLoaderRoute: typeof VolunteersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tracking': {
+      id: '/tracking'
+      path: '/tracking'
+      fullPath: '/tracking'
+      preLoaderRoute: typeof TrackingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sos': {
+      id: '/sos'
+      path: '/sos'
+      fullPath: '/sos'
+      preLoaderRoute: typeof SosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/safety': {
+      id: '/safety'
+      path: '/safety'
+      fullPath: '/safety'
+      preLoaderRoute: typeof SafetyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/risk': {
+      id: '/risk'
+      path: '/risk'
+      fullPath: '/risk'
+      preLoaderRoute: typeof RiskRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/onboarding': {
+      id: '/onboarding'
+      path: '/onboarding'
+      fullPath: '/onboarding'
+      preLoaderRoute: typeof OnboardingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/hospitals': {
+      id: '/hospitals'
+      path: '/hospitals'
+      fullPath: '/hospitals'
+      preLoaderRoute: typeof HospitalsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/family': {
+      id: '/family'
+      path: '/family'
+      fullPath: '/family'
+      preLoaderRoute: typeof FamilyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/assistant': {
+      id: '/assistant'
+      path: '/assistant'
+      fullPath: '/assistant'
+      preLoaderRoute: typeof AssistantRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/accident': {
+      id: '/accident'
+      path: '/accident'
+      fullPath: '/accident'
+      preLoaderRoute: typeof AccidentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -53,17 +317,20 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AccidentRoute: AccidentRoute,
+  AssistantRoute: AssistantRoute,
+  DashboardRoute: DashboardRoute,
+  FamilyRoute: FamilyRoute,
+  HospitalsRoute: HospitalsRoute,
+  LoginRoute: LoginRoute,
+  OnboardingRoute: OnboardingRoute,
+  ProfileRoute: ProfileRoute,
+  RiskRoute: RiskRoute,
+  SafetyRoute: SafetyRoute,
+  SosRoute: SosRoute,
+  TrackingRoute: TrackingRoute,
+  VolunteersRoute: VolunteersRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
