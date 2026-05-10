@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as VolunteersRouteImport } from './routes/volunteers'
 import { Route as TrackingRouteImport } from './routes/tracking'
 import { Route as SosRouteImport } from './routes/sos'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
@@ -18,6 +19,11 @@ import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as AssistantRouteImport } from './routes/assistant'
 import { Route as IndexRouteImport } from './routes/index'
 
+const VolunteersRoute = VolunteersRouteImport.update({
+  id: '/volunteers',
+  path: '/volunteers',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TrackingRoute = TrackingRouteImport.update({
   id: '/tracking',
   path: '/tracking',
@@ -68,6 +74,7 @@ export interface FileRoutesByFullPath {
   '/onboarding': typeof OnboardingRoute
   '/sos': typeof SosRoute
   '/tracking': typeof TrackingRoute
+  '/volunteers': typeof VolunteersRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -78,6 +85,7 @@ export interface FileRoutesByTo {
   '/onboarding': typeof OnboardingRoute
   '/sos': typeof SosRoute
   '/tracking': typeof TrackingRoute
+  '/volunteers': typeof VolunteersRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -89,6 +97,7 @@ export interface FileRoutesById {
   '/onboarding': typeof OnboardingRoute
   '/sos': typeof SosRoute
   '/tracking': typeof TrackingRoute
+  '/volunteers': typeof VolunteersRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -101,6 +110,7 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/sos'
     | '/tracking'
+    | '/volunteers'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -111,6 +121,7 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/sos'
     | '/tracking'
+    | '/volunteers'
   id:
     | '__root__'
     | '/'
@@ -121,6 +132,7 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/sos'
     | '/tracking'
+    | '/volunteers'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -132,10 +144,18 @@ export interface RootRouteChildren {
   OnboardingRoute: typeof OnboardingRoute
   SosRoute: typeof SosRoute
   TrackingRoute: typeof TrackingRoute
+  VolunteersRoute: typeof VolunteersRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/volunteers': {
+      id: '/volunteers'
+      path: '/volunteers'
+      fullPath: '/volunteers'
+      preLoaderRoute: typeof VolunteersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/tracking': {
       id: '/tracking'
       path: '/tracking'
@@ -204,6 +224,7 @@ const rootRouteChildren: RootRouteChildren = {
   OnboardingRoute: OnboardingRoute,
   SosRoute: SosRoute,
   TrackingRoute: TrackingRoute,
+  VolunteersRoute: VolunteersRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
