@@ -14,6 +14,7 @@ import { Route as TrackingRouteImport } from './routes/tracking'
 import { Route as SosRouteImport } from './routes/sos'
 import { Route as SafetyRouteImport } from './routes/safety'
 import { Route as RiskRouteImport } from './routes/risk'
+import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as HospitalsRouteImport } from './routes/hospitals'
@@ -45,6 +46,11 @@ const SafetyRoute = SafetyRouteImport.update({
 const RiskRoute = RiskRouteImport.update({
   id: '/risk',
   path: '/risk',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProfileRoute = ProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OnboardingRoute = OnboardingRouteImport.update({
@@ -91,6 +97,7 @@ export interface FileRoutesByFullPath {
   '/hospitals': typeof HospitalsRoute
   '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRoute
+  '/profile': typeof ProfileRoute
   '/risk': typeof RiskRoute
   '/safety': typeof SafetyRoute
   '/sos': typeof SosRoute
@@ -105,6 +112,7 @@ export interface FileRoutesByTo {
   '/hospitals': typeof HospitalsRoute
   '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRoute
+  '/profile': typeof ProfileRoute
   '/risk': typeof RiskRoute
   '/safety': typeof SafetyRoute
   '/sos': typeof SosRoute
@@ -120,6 +128,7 @@ export interface FileRoutesById {
   '/hospitals': typeof HospitalsRoute
   '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRoute
+  '/profile': typeof ProfileRoute
   '/risk': typeof RiskRoute
   '/safety': typeof SafetyRoute
   '/sos': typeof SosRoute
@@ -136,6 +145,7 @@ export interface FileRouteTypes {
     | '/hospitals'
     | '/login'
     | '/onboarding'
+    | '/profile'
     | '/risk'
     | '/safety'
     | '/sos'
@@ -150,6 +160,7 @@ export interface FileRouteTypes {
     | '/hospitals'
     | '/login'
     | '/onboarding'
+    | '/profile'
     | '/risk'
     | '/safety'
     | '/sos'
@@ -164,6 +175,7 @@ export interface FileRouteTypes {
     | '/hospitals'
     | '/login'
     | '/onboarding'
+    | '/profile'
     | '/risk'
     | '/safety'
     | '/sos'
@@ -179,6 +191,7 @@ export interface RootRouteChildren {
   HospitalsRoute: typeof HospitalsRoute
   LoginRoute: typeof LoginRoute
   OnboardingRoute: typeof OnboardingRoute
+  ProfileRoute: typeof ProfileRoute
   RiskRoute: typeof RiskRoute
   SafetyRoute: typeof SafetyRoute
   SosRoute: typeof SosRoute
@@ -221,6 +234,13 @@ declare module '@tanstack/react-router' {
       path: '/risk'
       fullPath: '/risk'
       preLoaderRoute: typeof RiskRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/onboarding': {
@@ -283,6 +303,7 @@ const rootRouteChildren: RootRouteChildren = {
   HospitalsRoute: HospitalsRoute,
   LoginRoute: LoginRoute,
   OnboardingRoute: OnboardingRoute,
+  ProfileRoute: ProfileRoute,
   RiskRoute: RiskRoute,
   SafetyRoute: SafetyRoute,
   SosRoute: SosRoute,
