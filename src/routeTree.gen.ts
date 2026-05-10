@@ -18,6 +18,7 @@ import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as HospitalsRouteImport } from './routes/hospitals'
+import { Route as FamilyRouteImport } from './routes/family'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as AssistantRouteImport } from './routes/assistant'
 import { Route as AccidentRouteImport } from './routes/accident'
@@ -68,6 +69,11 @@ const HospitalsRoute = HospitalsRouteImport.update({
   path: '/hospitals',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FamilyRoute = FamilyRouteImport.update({
+  id: '/family',
+  path: '/family',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DashboardRoute = DashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -94,6 +100,7 @@ export interface FileRoutesByFullPath {
   '/accident': typeof AccidentRoute
   '/assistant': typeof AssistantRoute
   '/dashboard': typeof DashboardRoute
+  '/family': typeof FamilyRoute
   '/hospitals': typeof HospitalsRoute
   '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRoute
@@ -109,6 +116,7 @@ export interface FileRoutesByTo {
   '/accident': typeof AccidentRoute
   '/assistant': typeof AssistantRoute
   '/dashboard': typeof DashboardRoute
+  '/family': typeof FamilyRoute
   '/hospitals': typeof HospitalsRoute
   '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRoute
@@ -125,6 +133,7 @@ export interface FileRoutesById {
   '/accident': typeof AccidentRoute
   '/assistant': typeof AssistantRoute
   '/dashboard': typeof DashboardRoute
+  '/family': typeof FamilyRoute
   '/hospitals': typeof HospitalsRoute
   '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRoute
@@ -142,6 +151,7 @@ export interface FileRouteTypes {
     | '/accident'
     | '/assistant'
     | '/dashboard'
+    | '/family'
     | '/hospitals'
     | '/login'
     | '/onboarding'
@@ -157,6 +167,7 @@ export interface FileRouteTypes {
     | '/accident'
     | '/assistant'
     | '/dashboard'
+    | '/family'
     | '/hospitals'
     | '/login'
     | '/onboarding'
@@ -172,6 +183,7 @@ export interface FileRouteTypes {
     | '/accident'
     | '/assistant'
     | '/dashboard'
+    | '/family'
     | '/hospitals'
     | '/login'
     | '/onboarding'
@@ -188,6 +200,7 @@ export interface RootRouteChildren {
   AccidentRoute: typeof AccidentRoute
   AssistantRoute: typeof AssistantRoute
   DashboardRoute: typeof DashboardRoute
+  FamilyRoute: typeof FamilyRoute
   HospitalsRoute: typeof HospitalsRoute
   LoginRoute: typeof LoginRoute
   OnboardingRoute: typeof OnboardingRoute
@@ -264,6 +277,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HospitalsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/family': {
+      id: '/family'
+      path: '/family'
+      fullPath: '/family'
+      preLoaderRoute: typeof FamilyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/dashboard': {
       id: '/dashboard'
       path: '/dashboard'
@@ -300,6 +320,7 @@ const rootRouteChildren: RootRouteChildren = {
   AccidentRoute: AccidentRoute,
   AssistantRoute: AssistantRoute,
   DashboardRoute: DashboardRoute,
+  FamilyRoute: FamilyRoute,
   HospitalsRoute: HospitalsRoute,
   LoginRoute: LoginRoute,
   OnboardingRoute: OnboardingRoute,
