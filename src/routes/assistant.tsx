@@ -2,30 +2,48 @@ import { createFileRoute } from "@tanstack/react-router";
 import { MobileShell } from "@/components/MobileShell";
 import { Bot, Mic, Send, Heart, Droplet, Activity, Phone } from "lucide-react";
 import { useState } from "react";
+import { searchFirstAid, FIRST_AID_KB, EMERGENCY_NUMBERS, telLink } from "@/lib/offline";
 
 export const Route = createFileRoute("/assistant")({ component: Assistant });
 
 const suggestions = [
-  { icon: Heart, label: "Check breathing", color: "from-emergency to-warning" },
-  { icon: Droplet, label: "Stop bleeding", color: "from-emergency to-purple-glow" },
-  { icon: Activity, label: "Start CPR", color: "from-ai to-cyan-glow" },
-  { icon: Phone, label: "Call doctor", color: "from-success to-cyan-glow" },
+  { icon: Heart, label: "Check breathing", q: "not breathing" },
+  { icon: Droplet, label: "Stop bleeding", q: "severe bleeding" },
+  { icon: Activity, label: "Start CPR", q: "cpr" },
+  { icon: Phone, label: "Call 108", q: "__call__" },
 ];
 
+type Msg = { role: "ai" | "user"; text: string };
+
+function answer(query: string): string {
+  if (/\b(108|112|ambulance|emergency number)\b/i.test(query)) {
+    return `Call 108 for ambulance or 112 for unified emergency. Tap the phone icon below to dial directly.`;
+  }
+  const entry = searchFirstAid(query);
+  if (entry) {
+    return `**${entry.title}**\n\n${entry.steps.map((s, i) => `${i + 1}. ${s}`).join("\n")}`;
+  }
+  const topics = FIRST_AID_KB.map((e) => e.title).join(", ");
+  return `I'm RoadSoS AI — working offline. I can help with: ${topics}. Describe what you see (e.g. "person is bleeding", "not breathing", "burn on arm").`;
+}
+
 function Assistant() {
-  const [msgs, setMsgs] = useState([
-    { role: "ai", text: "I'm RoadSoS AI. I'll guide you step-by-step. Is the person conscious and breathing?" },
+  const [msgs, setMsgs] = useState<Msg[]>([
+    { role: "ai", text: "I'm RoadSoS AI. I'll guide you step-by-step. Describe the emergency — bleeding, not breathing, burn, fracture, choking, accident…" },
   ]);
   const [input, setInput] = useState("");
+
+  const ask = (q: string) => {
+    if (q === "__call__") { window.location.href = telLink(EMERGENCY_NUMBERS.ambulance); return; }
+    setMsgs((m) => [...m, { role: "user", text: q }]);
+    setTimeout(() => setMsgs((m) => [...m, { role: "ai", text: answer(q) }]), 250);
+  };
 
   const send = () => {
     if (!input.trim()) return;
     const u = input;
-    setMsgs((m) => [...m, { role: "user", text: u }]);
     setInput("");
-    setTimeout(() => {
-      setMsgs((m) => [...m, { role: "ai", text: "Got it. Tilt their head back gently, lift the chin, and check for chest movement for 10 seconds. I'll start a timer." }]);
-    }, 700);
+    ask(u);
   };
 
   return (
@@ -41,7 +59,6 @@ function Assistant() {
           </div>
         </div>
         <p className="relative mt-4 text-sm font-semibold">Listening…</p>
-        {/* Voice wave */}
         <div className="relative mt-3 flex items-end gap-1 h-10">
           {Array.from({ length: 24 }).map((_, i) => (
             <div
@@ -62,8 +79,8 @@ function Assistant() {
       {/* Quick suggestions */}
       <div className="mt-4 grid grid-cols-2 gap-3">
         {suggestions.map((s) => (
-          <button key={s.label} className="glass rounded-2xl p-3 flex items-center gap-3 text-left active:scale-95 transition-transform">
-            <div className={`h-9 w-9 rounded-xl bg-gradient-to-br ${s.color} flex items-center justify-center`}>
+          <button key={s.label} onClick={() => ask(s.q)} className="glass rounded-2xl p-3 flex items-center gap-3 text-left active:scale-95 transition-transform">
+            <div className="h-9 w-9 rounded-xl bg-gradient-ai flex items-center justify-center">
               <s.icon className="h-4 w-4 text-white" />
             </div>
             <span className="text-sm font-medium leading-tight">{s.label}</span>
@@ -75,8 +92,10 @@ function Assistant() {
       <div className="mt-4 space-y-3">
         {msgs.map((m, i) => (
           <div key={i} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"} animate-fade-up`}>
-            <div className={`max-w-[80%] px-4 py-3 rounded-2xl text-sm ${m.role === "user" ? "bg-gradient-ai text-white rounded-br-md" : "glass rounded-bl-md"}`}>
-              {m.text}
+            <div className={`max-w-[85%] px-4 py-3 rounded-2xl text-sm whitespace-pre-line ${m.role === "user" ? "bg-gradient-ai text-white rounded-br-md" : "glass rounded-bl-md"}`}>
+              {m.text.split(/\*\*(.+?)\*\*/).map((part, idx) =>
+                idx % 2 === 1 ? <strong key={idx} className="text-cyan-glow">{part}</strong> : <span key={idx}>{part}</span>
+              )}
             </div>
           </div>
         ))}

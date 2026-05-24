@@ -12,6 +12,8 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as VolunteersRouteImport } from './routes/volunteers'
 import { Route as TrackingRouteImport } from './routes/tracking'
 import { Route as SosRouteImport } from './routes/sos'
+import { Route as SignupRouteImport } from './routes/signup'
+import { Route as SigninRouteImport } from './routes/signin'
 import { Route as SafetyRouteImport } from './routes/safety'
 import { Route as RiskRouteImport } from './routes/risk'
 import { Route as ProfileRouteImport } from './routes/profile'
@@ -37,6 +39,16 @@ const TrackingRoute = TrackingRouteImport.update({
 const SosRoute = SosRouteImport.update({
   id: '/sos',
   path: '/sos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SignupRoute = SignupRouteImport.update({
+  id: '/signup',
+  path: '/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SigninRoute = SigninRouteImport.update({
+  id: '/signin',
+  path: '/signin',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SafetyRoute = SafetyRouteImport.update({
@@ -107,6 +119,8 @@ export interface FileRoutesByFullPath {
   '/profile': typeof ProfileRoute
   '/risk': typeof RiskRoute
   '/safety': typeof SafetyRoute
+  '/signin': typeof SigninRoute
+  '/signup': typeof SignupRoute
   '/sos': typeof SosRoute
   '/tracking': typeof TrackingRoute
   '/volunteers': typeof VolunteersRoute
@@ -123,6 +137,8 @@ export interface FileRoutesByTo {
   '/profile': typeof ProfileRoute
   '/risk': typeof RiskRoute
   '/safety': typeof SafetyRoute
+  '/signin': typeof SigninRoute
+  '/signup': typeof SignupRoute
   '/sos': typeof SosRoute
   '/tracking': typeof TrackingRoute
   '/volunteers': typeof VolunteersRoute
@@ -140,6 +156,8 @@ export interface FileRoutesById {
   '/profile': typeof ProfileRoute
   '/risk': typeof RiskRoute
   '/safety': typeof SafetyRoute
+  '/signin': typeof SigninRoute
+  '/signup': typeof SignupRoute
   '/sos': typeof SosRoute
   '/tracking': typeof TrackingRoute
   '/volunteers': typeof VolunteersRoute
@@ -158,6 +176,8 @@ export interface FileRouteTypes {
     | '/profile'
     | '/risk'
     | '/safety'
+    | '/signin'
+    | '/signup'
     | '/sos'
     | '/tracking'
     | '/volunteers'
@@ -174,6 +194,8 @@ export interface FileRouteTypes {
     | '/profile'
     | '/risk'
     | '/safety'
+    | '/signin'
+    | '/signup'
     | '/sos'
     | '/tracking'
     | '/volunteers'
@@ -190,6 +212,8 @@ export interface FileRouteTypes {
     | '/profile'
     | '/risk'
     | '/safety'
+    | '/signin'
+    | '/signup'
     | '/sos'
     | '/tracking'
     | '/volunteers'
@@ -207,6 +231,8 @@ export interface RootRouteChildren {
   ProfileRoute: typeof ProfileRoute
   RiskRoute: typeof RiskRoute
   SafetyRoute: typeof SafetyRoute
+  SigninRoute: typeof SigninRoute
+  SignupRoute: typeof SignupRoute
   SosRoute: typeof SosRoute
   TrackingRoute: typeof TrackingRoute
   VolunteersRoute: typeof VolunteersRoute
@@ -233,6 +259,20 @@ declare module '@tanstack/react-router' {
       path: '/sos'
       fullPath: '/sos'
       preLoaderRoute: typeof SosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/signup': {
+      id: '/signup'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof SignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/signin': {
+      id: '/signin'
+      path: '/signin'
+      fullPath: '/signin'
+      preLoaderRoute: typeof SigninRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/safety': {
@@ -327,6 +367,8 @@ const rootRouteChildren: RootRouteChildren = {
   ProfileRoute: ProfileRoute,
   RiskRoute: RiskRoute,
   SafetyRoute: SafetyRoute,
+  SigninRoute: SigninRoute,
+  SignupRoute: SignupRoute,
   SosRoute: SosRoute,
   TrackingRoute: TrackingRoute,
   VolunteersRoute: VolunteersRoute,

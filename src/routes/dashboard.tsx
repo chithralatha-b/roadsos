@@ -1,6 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { MobileShell } from "@/components/MobileShell";
-import { Bell, MapPin, Hospital, Bot, FileText, Users, Ambulance, Brain, AlertTriangle, Cloud, Gauge, Phone } from "lucide-react";
+import { Bell, MapPin, Hospital, Bot, FileText, Users, Ambulance, Brain, AlertTriangle, Cloud, Gauge, Phone, Wifi, WifiOff } from "lucide-react";
+import { useEffect, useState } from "react";
+import { getUser, requestLocation, getLastLocation, EMERGENCY_NUMBERS, telLink, type User, type LastLocation } from "@/lib/offline";
 
 export const Route = createFileRoute("/dashboard")({ component: Dashboard });
 
@@ -16,20 +18,43 @@ const features = [
 ];
 
 function Dashboard() {
+  const [user, setUser] = useState<User | null>(null);
+  const [loc, setLoc] = useState<LastLocation | null>(null);
+  const [online, setOnline] = useState(true);
+
+  useEffect(() => {
+    setUser(getUser());
+    setLoc(getLastLocation());
+    setOnline(typeof navigator !== "undefined" ? navigator.onLine : true);
+    requestLocation().then(setLoc).catch(() => {});
+    const on = () => setOnline(true);
+    const off = () => setOnline(false);
+    window.addEventListener("online", on);
+    window.addEventListener("offline", off);
+    return () => { window.removeEventListener("online", on); window.removeEventListener("offline", off); };
+  }, []);
+
+  const greeting = (() => {
+    const h = new Date().getHours();
+    return h < 12 ? "Good morning" : h < 18 ? "Good afternoon" : "Good evening";
+  })();
+
   return (
     <MobileShell>
       {/* Top greeting */}
       <div className="flex items-center justify-between pt-6">
         <div>
-          <p className="text-xs text-muted-foreground">Good evening</p>
-          <h1 className="text-2xl font-bold tracking-tight">Aarav Sharma</h1>
+          <p className="text-xs text-muted-foreground">{greeting}</p>
+          <h1 className="text-2xl font-bold tracking-tight">{user?.name ?? "Guest"}</h1>
         </div>
         <div className="flex items-center gap-2">
           <button className="relative h-11 w-11 rounded-2xl glass flex items-center justify-center">
             <Bell className="h-5 w-5" />
             <span className="absolute top-2 right-2 h-2 w-2 rounded-full bg-emergency animate-pulse" />
           </button>
-          <div className="h-11 w-11 rounded-2xl bg-gradient-ai flex items-center justify-center text-white font-semibold">A</div>
+          <Link to="/profile" className="h-11 w-11 rounded-2xl bg-gradient-ai flex items-center justify-center text-white font-semibold">
+            {(user?.name ?? "G")[0]}
+          </Link>
         </div>
       </div>
 
@@ -42,13 +67,36 @@ function Dashboard() {
             <div className="h-3 w-3 rounded-full bg-success shadow-[0_0_20px_oklch(0.72_0.18_155)]" />
           </div>
           <div className="flex-1">
-            <p className="text-xs text-muted-foreground tracking-wider uppercase">Status</p>
+            <p className="text-xs text-muted-foreground tracking-wider uppercase flex items-center gap-1.5">
+              Status {online ? <Wifi className="h-3 w-3 text-success" /> : <WifiOff className="h-3 w-3 text-warning" />}
+              <span className={online ? "text-success" : "text-warning"}>{online ? "Online" : "Offline · cached data"}</span>
+            </p>
             <p className="text-lg font-semibold">All systems active</p>
             <p className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
-              <MapPin className="h-3 w-3" /> Anna Nagar, Chennai
+              <MapPin className="h-3 w-3" />
+              {loc ? `${loc.lat.toFixed(4)}°, ${loc.lng.toFixed(4)}°` : "Locating…"}
             </p>
           </div>
         </div>
+        {/* Quick dial emergency */}
+        <div className="relative mt-4 grid grid-cols-3 gap-2">
+          {[
+            { n: "108", l: "Ambulance", c: "bg-emergency/20 text-emergency-glow", href: telLink(EMERGENCY_NUMBERS.ambulance) },
+            { n: "112", l: "Emergency", c: "bg-ai/20 text-cyan-glow", href: telLink(EMERGENCY_NUMBERS.unified) },
+            { n: "100", l: "Police", c: "bg-purple-glow/20 text-purple-glow", href: telLink(EMERGENCY_NUMBERS.police) },
+          ].map((b) => (
+            <a key={b.n} href={b.href} className={`py-2 rounded-xl ${b.c} text-center`}>
+              <p className="text-base font-bold">{b.n}</p>
+              <p className="text-[10px]">{b.l}</p>
+            </a>
+          ))}
+        </div>
+        {user?.guest && (
+          <div className="relative mt-3 flex items-center justify-between rounded-xl bg-cyan-glow/10 border border-cyan-glow/30 px-3 py-2">
+            <p className="text-[11px] text-cyan-glow">Using as guest — save your medical profile</p>
+            <Link to="/signup" className="text-[11px] font-bold text-cyan-glow">Sign up →</Link>
+          </div>
+        )}
       </div>
 
       {/* Score widgets */}
