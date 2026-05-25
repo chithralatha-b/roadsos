@@ -1,5 +1,6 @@
 import { ReactNode } from "react";
 import { BottomNav } from "./BottomNav";
+import { FloatingChatbot } from "./FloatingChatbot";
 import { Link } from "@tanstack/react-router";
 import { ChevronLeft } from "lucide-react";
 
@@ -42,6 +43,7 @@ export function MobileShell({
         )}
         <main className={`flex-1 px-4 ${hideNav ? "pb-6" : "pb-32"} animate-fade-up`}>{children}</main>
         {!hideNav && <BottomNav />}
+        {!hideNav && <FloatingChatbot />}
       </div>
     </div>
   );
