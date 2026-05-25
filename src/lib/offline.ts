@@ -158,6 +158,86 @@ export function signOut() {
   if (isBrowser()) localStorage.removeItem(KEY_USER);
 }
 
+// ---- Emergency contacts (with family flag) ----
+export type EmergencyContact = {
+  id: string;
+  name: string;
+  phone: string;
+  relation: string;
+  family: boolean;
+  shareLocation: boolean;
+};
+
+const KEY_CONTACTS = "roadsos.contacts.v1";
+
+const SEED_CONTACTS: EmergencyContact[] = [
+  { id: "c1", name: "Mom", phone: "+919876512345", relation: "Mother", family: true, shareLocation: true },
+  { id: "c2", name: "Dr. Kumar", phone: "+919840098765", relation: "Family Doctor", family: false, shareLocation: false },
+];
+
+export function getContacts(): EmergencyContact[] {
+  if (!isBrowser()) return SEED_CONTACTS;
+  try {
+    const raw = localStorage.getItem(KEY_CONTACTS);
+    if (!raw) { localStorage.setItem(KEY_CONTACTS, JSON.stringify(SEED_CONTACTS)); return SEED_CONTACTS; }
+    return JSON.parse(raw);
+  } catch { return SEED_CONTACTS; }
+}
+
+export function saveContacts(list: EmergencyContact[]) {
+  if (isBrowser()) localStorage.setItem(KEY_CONTACTS, JSON.stringify(list));
+}
+
+export function addContact(c: Omit<EmergencyContact, "id">): EmergencyContact {
+  const nc: EmergencyContact = { ...c, id: `c-${Date.now()}` };
+  saveContacts([nc, ...getContacts()]);
+  return nc;
+}
+
+export function removeContact(id: string) {
+  saveContacts(getContacts().filter((c) => c.id !== id));
+}
+
+export function updateContact(id: string, patch: Partial<EmergencyContact>) {
+  saveContacts(getContacts().map((c) => (c.id === id ? { ...c, ...patch } : c)));
+}
+
+// ---- Speed / driving helpers ----
+export const SPEED_LIMIT_KMH = 60;
+export function msToKmh(ms: number | null | undefined) {
+  if (ms == null || isNaN(ms)) return 0;
+  return Math.max(0, Math.round(ms * 3.6));
+}
+
+export type DrivingSample = { lat: number; lng: number; speedKmh: number; heading: number | null; ts: number };
+
+export function watchDriving(cb: (s: DrivingSample) => void): () => void {
+  if (!isBrowser() || !navigator.geolocation) return () => {};
+  const id = navigator.geolocation.watchPosition(
+    (p) => {
+      const s: DrivingSample = {
+        lat: p.coords.latitude,
+        lng: p.coords.longitude,
+        speedKmh: msToKmh(p.coords.speed),
+        heading: p.coords.heading,
+        ts: Date.now(),
+      };
+      saveLastLocation({ lat: s.lat, lng: s.lng, ts: s.ts });
+      cb(s);
+    },
+    () => {},
+    { enableHighAccuracy: true, maximumAge: 2000, timeout: 10_000 },
+  );
+  return () => navigator.geolocation.clearWatch(id);
+}
+
+// ---- SMS broadcast helper for SOS ----
+export function buildSosMessage(loc: { lat: number; lng: number } | null, name?: string) {
+  const who = name && name !== "Guest User" ? name : "I";
+  const link = loc ? `https://maps.google.com/?q=${loc.lat},${loc.lng}` : "(location unavailable)";
+  return `🚨 SOS from RoadSoS AI — ${who} need help. Live location: ${link}`;
+}
+
 // ---- Distance helper (Haversine, km) ----
 export function distanceKm(a: { lat: number; lng: number }, b: { lat: number; lng: number }) {
   const R = 6371;
