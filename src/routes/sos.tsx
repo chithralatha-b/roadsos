@@ -1,17 +1,40 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { MobileShell } from "@/components/MobileShell";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AlertTriangle, MapPin, Gauge, Mic, X } from "lucide-react";
+import { createEmergency, getCurrentPosition } from "@/lib/emergency";
+import { EMERGENCY_NUMBERS, telLink, getLastLocation } from "@/lib/offline";
 
 export const Route = createFileRoute("/sos")({ component: SOS });
 
 function SOS() {
   const [count, setCount] = useState(10);
   const [cancelled, setCancelled] = useState(false);
+  const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(null);
+  const [saved, setSaved] = useState(false);
+  const dialed = useRef(false);
   const navigate = useNavigate();
 
   useEffect(() => {
+    const last = getLastLocation();
+    if (last) setCoords({ lat: last.lat, lng: last.lng });
+    getCurrentPosition().then((p) => setCoords({ lat: p.lat, lng: p.lng })).catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    if (cancelled || saved || !coords) return;
+    createEmergency({ lat: coords.lat, lng: coords.lng, severity: "critical" })
+      .then(() => setSaved(true))
+      .catch(() => setSaved(true));
+  }, [coords, cancelled, saved]);
+
+  useEffect(() => {
     if (cancelled) return;
+    if (count === 3 && !dialed.current) {
+      dialed.current = true;
+      // Trigger phone dialer to 108
+      window.location.href = telLink(EMERGENCY_NUMBERS.ambulance);
+    }
     if (count <= 0) { navigate({ to: "/tracking" }); return; }
     const t = setTimeout(() => setCount(count - 1), 1000);
     return () => clearTimeout(t);
