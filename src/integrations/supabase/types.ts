@@ -14,7 +14,129 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      emergency_requests: {
+        Row: {
+          address: string | null
+          created_at: string
+          id: string
+          lat: number
+          lng: number
+          name: string | null
+          notes: string | null
+          phone: string | null
+          severity: string | null
+          status: string
+          user_id: string | null
+        }
+        Insert: {
+          address?: string | null
+          created_at?: string
+          id?: string
+          lat: number
+          lng: number
+          name?: string | null
+          notes?: string | null
+          phone?: string | null
+          severity?: string | null
+          status?: string
+          user_id?: string | null
+        }
+        Update: {
+          address?: string | null
+          created_at?: string
+          id?: string
+          lat?: number
+          lng?: number
+          name?: string | null
+          notes?: string | null
+          phone?: string | null
+          severity?: string | null
+          status?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          allergies: string | null
+          blood_group: string | null
+          created_at: string
+          emergency_contact: string | null
+          id: string
+          language: string | null
+          name: string | null
+          phone: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          allergies?: string | null
+          blood_group?: string | null
+          created_at?: string
+          emergency_contact?: string | null
+          id?: string
+          language?: string | null
+          name?: string | null
+          phone?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          allergies?: string | null
+          blood_group?: string | null
+          created_at?: string
+          emergency_contact?: string | null
+          id?: string
+          language?: string | null
+          name?: string | null
+          phone?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      volunteers: {
+        Row: {
+          area: string | null
+          available: boolean
+          created_at: string
+          id: string
+          lat: number | null
+          lng: number | null
+          name: string
+          phone: string
+          skills: string[] | null
+          user_id: string | null
+          verified: boolean
+        }
+        Insert: {
+          area?: string | null
+          available?: boolean
+          created_at?: string
+          id?: string
+          lat?: number | null
+          lng?: number | null
+          name: string
+          phone: string
+          skills?: string[] | null
+          user_id?: string | null
+          verified?: boolean
+        }
+        Update: {
+          area?: string | null
+          available?: boolean
+          created_at?: string
+          id?: string
+          lat?: number | null
+          lng?: number | null
+          name?: string
+          phone?: string
+          skills?: string[] | null
+          user_id?: string | null
+          verified?: boolean
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
