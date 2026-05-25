@@ -1,8 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { MobileShell } from "@/components/MobileShell";
+import { LiveMap } from "@/components/LiveMap";
 import { Bell, MapPin, Hospital, Bot, FileText, Users, Ambulance, Brain, AlertTriangle, Cloud, Gauge, Phone, Wifi, WifiOff } from "lucide-react";
-import { useEffect, useState } from "react";
-import { getUser, requestLocation, getLastLocation, EMERGENCY_NUMBERS, telLink, type User, type LastLocation } from "@/lib/offline";
+import { useEffect, useMemo, useState } from "react";
+import { getUser, requestLocation, getLastLocation, EMERGENCY_NUMBERS, telLink, HOSPITALS, type User, type LastLocation } from "@/lib/offline";
 
 export const Route = createFileRoute("/dashboard")({ component: Dashboard });
 
@@ -97,6 +98,19 @@ function Dashboard() {
             <Link to="/signup" className="text-[11px] font-bold text-cyan-glow">Sign up →</Link>
           </div>
         )}
+      </div>
+
+      {/* Live map */}
+      <div className="mt-4">
+        <div className="flex items-center justify-between mb-2">
+          <h2 className="text-xs uppercase tracking-widest text-muted-foreground">Live Map · Nearby Hospitals</h2>
+          <Link to="/hospitals" className="text-[11px] text-cyan-glow font-semibold">View all →</Link>
+        </div>
+        <LiveMap
+          center={loc ? { lat: loc.lat, lng: loc.lng } : null}
+          markers={useMemo(() => HOSPITALS.map((h) => ({ lat: h.lat, lng: h.lng, label: h.name, color: "green" as const })), [])}
+          height={220}
+        />
       </div>
 
       {/* Score widgets */}
