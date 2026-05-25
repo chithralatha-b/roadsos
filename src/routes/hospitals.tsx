@@ -6,7 +6,7 @@ import { HOSPITALS, getLastLocation, requestLocation, distanceKm, googleMapsNav,
 
 export const Route = createFileRoute("/hospitals")({ component: Hospitals });
 
-const filters = ["Nearest", "Fastest Route", "Trauma", "ICU"] as const;
+const filters = ["Nearest", "Within 10 km", "Trauma", "ICU"] as const;
 
 function Hospitals() {
   const [active, setActive] = useState<(typeof filters)[number]>("Nearest");
@@ -28,9 +28,8 @@ function Hospitals() {
   let list = [...enriched];
   if (active === "Trauma") list = list.filter((h) => h.trauma);
   if (active === "ICU") list = list.filter((h) => h.tag.includes("ICU"));
-  if (active === "Nearest" || active === "Fastest Route") {
-    list.sort((a, b) => (a.dist ?? 99) - (b.dist ?? 99));
-  }
+  if (active === "Within 10 km") list = list.filter((h) => (h.dist ?? 99) <= 10);
+  list.sort((a, b) => (a.dist ?? 99) - (b.dist ?? 99));
 
   return (
     <MobileShell title="Nearby Hospitals" back="/dashboard">
