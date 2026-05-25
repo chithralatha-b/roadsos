@@ -1,7 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { MobileShell } from "@/components/MobileShell";
 import { LiveMap } from "@/components/LiveMap";
-import { Bell, MapPin, Hospital, Bot, FileText, Users, Ambulance, Brain, AlertTriangle, Cloud, Gauge, Phone, Wifi, WifiOff } from "lucide-react";
+import { SpeedBanner } from "@/components/SpeedBanner";
+import { Bell, MapPin, Hospital, Bot, FileText, Users, Ambulance, Brain, AlertTriangle, Cloud, Gauge, Phone, Wifi, WifiOff, UserPlus } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { getUser, requestLocation, getLastLocation, EMERGENCY_NUMBERS, telLink, HOSPITALS, type User, type LastLocation } from "@/lib/offline";
 
@@ -105,6 +106,9 @@ function Dashboard() {
         )}
       </div>
 
+      {/* Live speed / direction banner (GPS) */}
+      <SpeedBanner />
+
       {/* Live map */}
       <div className="mt-4">
         <div className="flex items-center justify-between mb-2">
@@ -150,11 +154,16 @@ function Dashboard() {
       </div>
 
       {/* Quick contacts */}
-      <h2 className="mt-6 mb-3 text-sm font-semibold tracking-wider uppercase text-muted-foreground">Emergency Contacts</h2>
+      <div className="mt-6 mb-3 flex items-center justify-between">
+        <h2 className="text-sm font-semibold tracking-wider uppercase text-muted-foreground">Emergency Contacts</h2>
+        <Link to="/contacts" className="text-[11px] font-semibold text-cyan-glow flex items-center gap-1">
+          <UserPlus className="h-3.5 w-3.5" /> Manage
+        </Link>
+      </div>
       <div className="space-y-2">
         {[
-          { name: "Mom", num: "+91 98765 ••••", color: "bg-emergency" },
-          { name: "Dr. Kumar", num: "Family Doctor", color: "bg-ai" },
+          { name: "Mom", num: "+91 98765 ••••", color: "bg-emergency", href: telLink("+919876512345") },
+          { name: "Dr. Kumar", num: "Family Doctor", color: "bg-ai", href: telLink("+919840098765") },
         ].map((c) => (
           <div key={c.name} className="glass rounded-2xl px-4 py-3 flex items-center gap-3">
             <div className={`h-10 w-10 rounded-full ${c.color} flex items-center justify-center text-white font-semibold`}>{c.name[0]}</div>
@@ -162,7 +171,7 @@ function Dashboard() {
               <p className="text-sm font-medium">{c.name}</p>
               <p className="text-xs text-muted-foreground">{c.num}</p>
             </div>
-            <button className="h-9 w-9 rounded-xl bg-success/20 text-success flex items-center justify-center"><Phone className="h-4 w-4" /></button>
+            <a href={c.href} className="h-9 w-9 rounded-xl bg-success/20 text-success flex items-center justify-center"><Phone className="h-4 w-4" /></a>
           </div>
         ))}
       </div>
