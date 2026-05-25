@@ -40,6 +40,11 @@ function Dashboard() {
     return h < 12 ? "Good morning" : h < 18 ? "Good afternoon" : "Good evening";
   })();
 
+  const hospitalMarkers = useMemo(
+    () => HOSPITALS.map((h) => ({ lat: h.lat, lng: h.lng, label: h.name, color: "green" as const })),
+    [],
+  );
+
   return (
     <MobileShell>
       {/* Top greeting */}
@@ -108,7 +113,7 @@ function Dashboard() {
         </div>
         <LiveMap
           center={loc ? { lat: loc.lat, lng: loc.lng } : null}
-          markers={useMemo(() => HOSPITALS.map((h) => ({ lat: h.lat, lng: h.lng, label: h.name, color: "green" as const })), [])}
+          markers={hospitalMarkers}
           height={220}
         />
       </div>
