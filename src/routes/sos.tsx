@@ -3,7 +3,7 @@ import { MobileShell } from "@/components/MobileShell";
 import { useEffect, useRef, useState } from "react";
 import { AlertTriangle, MapPin, Gauge, Mic, X } from "lucide-react";
 import { createEmergency, getCurrentPosition } from "@/lib/emergency";
-import { EMERGENCY_NUMBERS, telLink, getLastLocation } from "@/lib/offline";
+import { EMERGENCY_NUMBERS, telLink, getLastLocation, getContacts, buildSosMessage, getUser } from "@/lib/offline";
 
 export const Route = createFileRoute("/sos")({ component: SOS });
 
@@ -26,6 +26,19 @@ function SOS() {
     createEmergency({ lat: coords.lat, lng: coords.lng, severity: "critical" })
       .then(() => setSaved(true))
       .catch(() => setSaved(true));
+    // Broadcast SMS to family contacts that opted in
+    try {
+      const contacts = getContacts().filter((c) => c.shareLocation);
+      if (contacts.length) {
+        const phones = contacts.map((c) => c.phone.replace(/\s+/g, "")).join(",");
+        const msg = buildSosMessage(coords, getUser().name);
+        // Fire a hidden iframe to avoid hijacking the dialer; on mobile this opens SMS composer.
+        const a = document.createElement("a");
+        a.href = `sms:${phones}?body=${encodeURIComponent(msg)}`;
+        a.rel = "noopener";
+        a.click();
+      }
+    } catch {}
   }, [coords, cancelled, saved]);
 
   useEffect(() => {
