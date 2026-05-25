@@ -77,10 +77,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "author", content: "RoadSoS AI" },
       { name: "theme-color", content: "#0a0f1f" },
       { property: "og:title", content: "RoadSoS AI — Saving Lives Faster" },
-      { property: "og:description", content: "AI-powered emergency road safety and rescue response platform." },
+      { property: "og:description", content: "AI-powered emergency road safety, accident detection, and rescue response platform." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:title", content: "RoadSoS AI — Saving Lives Faster" },
+      { name: "twitter:description", content: "AI-powered emergency road safety, accident detection, and rescue response platform." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/a7eec711-605d-4335-ac46-a8abaec67ec1/id-preview-c8157380--429e4027-5d44-44c5-9131-6c6a94c1f9fc.lovable.app-1779688520859.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/a7eec711-605d-4335-ac46-a8abaec67ec1/id-preview-c8157380--429e4027-5d44-44c5-9131-6c6a94c1f9fc.lovable.app-1779688520859.png" },
     ],
     links: [
       {
