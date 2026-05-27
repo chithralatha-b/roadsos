@@ -2,9 +2,9 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { MobileShell } from "@/components/MobileShell";
 import { LiveMap } from "@/components/LiveMap";
 import { SpeedBanner } from "@/components/SpeedBanner";
-import { Bell, MapPin, Hospital, Bot, FileText, Users, Ambulance, Brain, AlertTriangle, Cloud, Gauge, Phone, Wifi, WifiOff, UserPlus } from "lucide-react";
+import { Bell, MapPin, Hospital, Bot, FileText, Users, Ambulance, Truck, AlertTriangle, Cloud, Phone, Wifi, WifiOff, UserPlus, Shield } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-import { getUser, requestLocation, getLastLocation, EMERGENCY_NUMBERS, telLink, HOSPITALS, type User, type LastLocation } from "@/lib/offline";
+import { getUser, requestLocation, getLastLocation, getContacts, EMERGENCY_NUMBERS, telLink, smsLink, buildSosMessage, HOSPITALS, distanceKm, type User, type LastLocation } from "@/lib/offline";
 
 export const Route = createFileRoute("/dashboard")({ component: Dashboard });
 
@@ -15,8 +15,8 @@ const features = [
   { to: "/accident", icon: FileText, label: "Accident Report", color: "from-warning to-emergency", glow: "" },
   { to: "/volunteers", icon: Users, label: "Volunteer Help", color: "from-purple-glow to-ai", glow: "" },
   { to: "/tracking", icon: Ambulance, label: "Rescue Tracking", color: "from-cyan-glow to-ai", glow: "" },
-  { to: "/safety", icon: Brain, label: "Driver Safety", color: "from-purple-glow to-emergency", glow: "" },
   { to: "/risk", icon: AlertTriangle, label: "Road Risk Alerts", color: "from-warning to-purple-glow", glow: "" },
+  { to: "/contacts", icon: Users, label: "Emergency Contacts", color: "from-emergency to-ai", glow: "" },
 ];
 
 function Dashboard() {
