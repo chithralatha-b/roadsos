@@ -123,10 +123,20 @@ function Dashboard() {
         />
       </div>
 
-      {/* Score widgets */}
-      <div className="mt-4 grid grid-cols-2 gap-3">
-        <ScoreCard icon={Gauge} label="Safety Score" value="92" max="100" tint="ai" />
-        <ScoreCard icon={Brain} label="Readiness" value="A+" tint="success" />
+      {/* Rescue quick services */}
+      <div className="mt-4 grid grid-cols-3 gap-2">
+        <a href={telLink("1073")} className="glass rounded-2xl p-3 flex flex-col items-center gap-1 active:scale-95 transition-transform">
+          <div className="h-9 w-9 rounded-xl bg-warning/20 text-warning flex items-center justify-center"><Truck className="h-4 w-4" /></div>
+          <p className="text-[10px] font-semibold text-center leading-tight">Vehicle Rescue</p>
+        </a>
+        <a href={telLink(EMERGENCY_NUMBERS.ambulance)} className="glass rounded-2xl p-3 flex flex-col items-center gap-1 active:scale-95 transition-transform">
+          <div className="h-9 w-9 rounded-xl bg-emergency/20 text-emergency-glow flex items-center justify-center"><Ambulance className="h-4 w-4" /></div>
+          <p className="text-[10px] font-semibold text-center leading-tight">Ambulance</p>
+        </a>
+        <a href={telLink(EMERGENCY_NUMBERS.police)} className="glass rounded-2xl p-3 flex flex-col items-center gap-1 active:scale-95 transition-transform">
+          <div className="h-9 w-9 rounded-xl bg-purple-glow/20 text-purple-glow flex items-center justify-center"><Shield className="h-4 w-4" /></div>
+          <p className="text-[10px] font-semibold text-center leading-tight">Police</p>
+        </a>
       </div>
 
       {/* Live ticker */}
