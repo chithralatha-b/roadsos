@@ -124,6 +124,8 @@ export type User = {
   phone: string;
   bloodGroup: string;
   allergies: string;
+  conditions: string;
+  insurance: string;
   emergencyContact: string;
   language: "English" | "தமிழ்" | "हिन्दी";
   guest: boolean;
@@ -135,6 +137,8 @@ const GUEST: User = {
   phone: "+91 00000 00000",
   bloodGroup: "Unknown",
   allergies: "None on file",
+  conditions: "None",
+  insurance: "Not provided",
   emergencyContact: "+91 00000 00000",
   language: "English",
   guest: true,
@@ -223,12 +227,108 @@ export function watchDriving(cb: (s: DrivingSample) => void): () => void {
         ts: Date.now(),
       };
       saveLastLocation({ lat: s.lat, lng: s.lng, ts: s.ts });
+      recordDrivingSample(s);
       cb(s);
     },
     () => {},
     { enableHighAccuracy: true, maximumAge: 2000, timeout: 10_000 },
   );
   return () => navigator.geolocation.clearWatch(id);
+}
+
+// ---- Live Driver Risk Stats (computed from real GPS samples) ----
+export type DriverStats = {
+  maxSpeedKmh: number;
+  avgSpeedKmh: number;
+  overspeedEvents: number;
+  harshBrakes: number;
+  harshAccels: number;
+  phoneDistractions: number;
+  distanceKm: number;
+  drivingMinutes: number;
+  score: number; // 0-100
+  updatedAt: number;
+};
+
+const KEY_DRIVER = "roadsos.driver.v1";
+const EMPTY_STATS: DriverStats = {
+  maxSpeedKmh: 0, avgSpeedKmh: 0, overspeedEvents: 0, harshBrakes: 0, harshAccels: 0,
+  phoneDistractions: 0, distanceKm: 0, drivingMinutes: 0, score: 100, updatedAt: Date.now(),
+};
+
+const driverListeners = new Set<(s: DriverStats) => void>();
+let lastSample: DrivingSample | null = null;
+let speedSum = 0; let speedSamples = 0;
+
+export function getDriverStats(): DriverStats {
+  if (!isBrowser()) return EMPTY_STATS;
+  try {
+    const raw = localStorage.getItem(KEY_DRIVER);
+    return raw ? { ...EMPTY_STATS, ...JSON.parse(raw) } : EMPTY_STATS;
+  } catch { return EMPTY_STATS; }
+}
+
+function saveDriverStats(s: DriverStats) {
+  if (!isBrowser()) return;
+  localStorage.setItem(KEY_DRIVER, JSON.stringify(s));
+  driverListeners.forEach((cb) => cb(s));
+}
+
+export function subscribeDriverStats(cb: (s: DriverStats) => void): () => void {
+  driverListeners.add(cb);
+  cb(getDriverStats());
+  return () => { driverListeners.delete(cb); };
+}
+
+export function resetDriverStats() { saveDriverStats({ ...EMPTY_STATS, updatedAt: Date.now() }); }
+
+function computeScore(s: DriverStats): number {
+  let score = 100;
+  score -= s.overspeedEvents * 3;
+  score -= s.harshBrakes * 5;
+  score -= s.harshAccels * 4;
+  score -= s.phoneDistractions * 6;
+  return Math.max(0, Math.min(100, Math.round(score)));
+}
+
+function recordDrivingSample(s: DrivingSample) {
+  const cur = getDriverStats();
+  const next: DriverStats = { ...cur };
+  next.maxSpeedKmh = Math.max(cur.maxSpeedKmh, s.speedKmh);
+  speedSum += s.speedKmh; speedSamples += 1;
+  next.avgSpeedKmh = Math.round(speedSum / speedSamples);
+  if (s.speedKmh > SPEED_LIMIT_KMH && (lastSample?.speedKmh ?? 0) <= SPEED_LIMIT_KMH) {
+    next.overspeedEvents = cur.overspeedEvents + 1;
+  }
+  if (lastSample) {
+    const dt = Math.max(0.1, (s.ts - lastSample.ts) / 1000);
+    const dv = s.speedKmh - lastSample.speedKmh; // km/h per sec
+    if (dv < -10 && dt < 4) next.harshBrakes = cur.harshBrakes + 1;
+    if (dv > 12 && dt < 4) next.harshAccels = cur.harshAccels + 1;
+    const km = distanceKm({ lat: lastSample.lat, lng: lastSample.lng }, { lat: s.lat, lng: s.lng });
+    next.distanceKm = Math.round((cur.distanceKm + km) * 10) / 10;
+    next.drivingMinutes = Math.round(cur.drivingMinutes + dt / 60);
+  }
+  next.updatedAt = s.ts;
+  next.score = computeScore(next);
+  lastSample = s;
+  saveDriverStats(next);
+}
+
+// Phone distraction: count when user switches away while moving > 10 km/h
+let distractionWired = false;
+export function wireDistractionDetection() {
+  if (!isBrowser() || distractionWired) return;
+  distractionWired = true;
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden && (lastSample?.speedKmh ?? 0) > 10) {
+      const cur = getDriverStats();
+      const next = { ...cur, phoneDistractions: cur.phoneDistractions + 1 };
+      next.score = computeScore(next);
+      next.updatedAt = Date.now();
+      saveDriverStats(next);
+    }
+  });
 }
 
 // ---- SMS broadcast helper for SOS ----

@@ -23,11 +23,14 @@ function Dashboard() {
   const [user, setUser] = useState<User | null>(null);
   const [loc, setLoc] = useState<LastLocation | null>(null);
   const [online, setOnline] = useState(true);
+  const [greeting, setGreeting] = useState("Welcome");
 
   useEffect(() => {
     setUser(getUser());
     setLoc(getLastLocation());
     setOnline(typeof navigator !== "undefined" ? navigator.onLine : true);
+    const h = new Date().getHours();
+    setGreeting(h < 12 ? "Good morning" : h < 18 ? "Good afternoon" : "Good evening");
     requestLocation().then(setLoc).catch(() => {});
     const on = () => setOnline(true);
     const off = () => setOnline(false);
@@ -36,10 +39,6 @@ function Dashboard() {
     return () => { window.removeEventListener("online", on); window.removeEventListener("offline", off); };
   }, []);
 
-  const greeting = (() => {
-    const h = new Date().getHours();
-    return h < 12 ? "Good morning" : h < 18 ? "Good afternoon" : "Good evening";
-  })();
 
   const hospitalMarkers = useMemo(
     () => HOSPITALS.map((h) => ({ lat: h.lat, lng: h.lng, label: h.name, color: "green" as const })),
