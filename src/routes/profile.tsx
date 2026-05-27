@@ -59,8 +59,8 @@ function Profile() {
       <div className="grid grid-cols-2 gap-3">
         <InfoEdit icon={Droplet} label="Blood Group" value={draft.bloodGroup} edit={edit} onChange={(v: string) => setDraft({ ...draft, bloodGroup: v })} tint="emergency" />
         <InfoEdit icon={Pill} label="Allergies" value={draft.allergies} edit={edit} onChange={(v: string) => setDraft({ ...draft, allergies: v })} tint="purple-glow" />
-        <InfoEdit icon={Heart} label="Conditions" value={draft.conditions} edit={edit} onChange={(v: string) => setDraft({ ...draft, conditions: v })} tint="warning" />
-        <InfoEdit icon={Shield} label="Insurance" value={draft.insurance} edit={edit} onChange={(v: string) => setDraft({ ...draft, insurance: v })} tint="ai" />
+        <InfoEdit icon={Heart} label="Conditions" value={"Asthma"} edit={false} tint="warning" />
+        <InfoEdit icon={Shield} label="Insurance" value={"Star Health"} edit={false} tint="ai" />
       </div>
 
       <div className="mt-5 mb-3 flex items-center justify-between">

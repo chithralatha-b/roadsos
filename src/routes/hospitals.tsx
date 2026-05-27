@@ -1,8 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { MobileShell } from "@/components/MobileShell";
-import { LiveMap } from "@/components/LiveMap";
-import { Hospital, Navigation, BedDouble, Droplet, Star, Phone, Truck, Ambulance, Wrench } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { Hospital, Navigation, BedDouble, Droplet, Star, Phone } from "lucide-react";
+import { useEffect, useState } from "react";
 import { HOSPITALS, getLastLocation, requestLocation, distanceKm, googleMapsNav, telLink, type LastLocation } from "@/lib/offline";
 
 export const Route = createFileRoute("/hospitals")({ component: Hospitals });
@@ -21,10 +20,10 @@ function Hospitals() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const enriched = useMemo(() => HOSPITALS.map((h) => ({
+  const enriched = HOSPITALS.map((h) => ({
     ...h,
     dist: loc ? distanceKm(loc, { lat: h.lat, lng: h.lng }) : null,
-  })), [loc]);
+  }));
 
   let list = [...enriched];
   if (active === "Trauma") list = list.filter((h) => h.trauma);
@@ -32,35 +31,31 @@ function Hospitals() {
   if (active === "Within 10 km") list = list.filter((h) => (h.dist ?? 99) <= 10);
   list.sort((a, b) => (a.dist ?? 99) - (b.dist ?? 99));
 
-  const markers = useMemo(
-    () => list.slice(0, 8).map((h) => ({ lat: h.lat, lng: h.lng, label: h.name, color: "green" as const })),
-    [list],
-  );
-
   return (
     <MobileShell title="Nearby Hospitals" back="/dashboard">
-      {/* Live map centered on user */}
-      <div className="mt-2">
-        <LiveMap center={loc ? { lat: loc.lat, lng: loc.lng } : null} markers={markers} height={220} />
-      </div>
-
-      {/* Rescue services */}
-      <div className="mt-4 grid grid-cols-3 gap-2">
-        <a href={telLink("1073")} className="glass rounded-2xl p-3 flex flex-col items-center gap-1 active:scale-95">
-          <div className="h-9 w-9 rounded-xl bg-warning/20 text-warning flex items-center justify-center"><Truck className="h-4 w-4" /></div>
-          <p className="text-[10px] font-semibold">Vehicle Rescue</p>
-          <p className="text-[9px] text-muted-foreground">1073</p>
-        </a>
-        <a href={telLink("108")} className="glass rounded-2xl p-3 flex flex-col items-center gap-1 active:scale-95">
-          <div className="h-9 w-9 rounded-xl bg-emergency/20 text-emergency-glow flex items-center justify-center"><Ambulance className="h-4 w-4" /></div>
-          <p className="text-[10px] font-semibold">Ambulance</p>
-          <p className="text-[9px] text-muted-foreground">108</p>
-        </a>
-        <a href={telLink("1033")} className="glass rounded-2xl p-3 flex flex-col items-center gap-1 active:scale-95">
-          <div className="h-9 w-9 rounded-xl bg-ai/20 text-cyan-glow flex items-center justify-center"><Wrench className="h-4 w-4" /></div>
-          <p className="text-[10px] font-semibold">Highway Help</p>
-          <p className="text-[9px] text-muted-foreground">1033</p>
-        </a>
+      {/* Mini map */}
+      <div className="relative mt-2 h-44 rounded-3xl overflow-hidden glass">
+        <div className="absolute inset-0 grid-bg opacity-60" />
+        <div className="absolute inset-0 bg-gradient-to-br from-ai/10 via-transparent to-emergency/10" />
+        {[{ x: "20%", y: "40%" }, { x: "55%", y: "25%" }, { x: "75%", y: "60%" }].map((p, i) => (
+          <div key={i} className="absolute" style={{ left: p.x, top: p.y }}>
+            <div className="absolute inset-0 -m-2 rounded-full bg-success/30 animate-ripple" />
+            <div className="relative h-8 w-8 rounded-xl bg-success flex items-center justify-center"><Hospital className="h-4 w-4 text-white" /></div>
+          </div>
+        ))}
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 h-10 w-10 rounded-full bg-ai glow-blue flex items-center justify-center">
+          <span className="h-3 w-3 rounded-full bg-white animate-pulse" />
+        </div>
+        {loc && (
+          <a
+            href={`https://www.google.com/maps/search/hospital/@${loc.lat},${loc.lng},14z`}
+            target="_blank"
+            rel="noreferrer"
+            className="absolute top-3 right-3 px-3 py-1.5 rounded-full bg-gradient-ai text-white text-[10px] font-semibold glow-blue"
+          >
+            Open in Google Maps
+          </a>
+        )}
       </div>
 
       {/* Filters */}

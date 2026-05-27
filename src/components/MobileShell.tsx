@@ -1,9 +1,8 @@
-import { ReactNode, useEffect } from "react";
+import { ReactNode } from "react";
 import { BottomNav } from "./BottomNav";
 import { FloatingChatbot } from "./FloatingChatbot";
 import { Link } from "@tanstack/react-router";
 import { ChevronLeft } from "lucide-react";
-import { wireDistractionDetection } from "@/lib/offline";
 
 export function MobileShell({
   children,
@@ -18,10 +17,8 @@ export function MobileShell({
   hideNav?: boolean;
   actions?: ReactNode;
 }) {
-  useEffect(() => { wireDistractionDetection(); }, []);
   return (
     <div className="relative mx-auto min-h-screen w-full max-w-md overflow-hidden">
-
       {/* Ambient glows */}
       <div className="pointer-events-none fixed inset-0 z-0">
         <div className="absolute -top-40 -left-20 h-80 w-80 rounded-full bg-ai/20 animate-glow" />

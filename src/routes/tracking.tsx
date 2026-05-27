@@ -1,100 +1,61 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { MobileShell } from "@/components/MobileShell";
-import { LiveMap } from "@/components/LiveMap";
-import { Ambulance, Hospital, Clock, Phone, Share2, Gauge, Compass, MapPin, Navigation } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
-import {
-  watchDriving,
-  HOSPITALS,
-  distanceKm,
-  telLink,
-  smsLink,
-  buildSosMessage,
-  googleMapsNav,
-  getUser,
-  type DrivingSample,
-} from "@/lib/offline";
+import { Ambulance, Hospital, Shield, Clock, Phone, Share2 } from "lucide-react";
+import { useEffect, useState } from "react";
 
 export const Route = createFileRoute("/tracking")({ component: Tracking });
 
-const DIRS = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
-const dirLabel = (h: number | null) => (h == null || isNaN(h) ? "—" : DIRS[Math.round(((h % 360) / 45)) % 8]);
-
 function Tracking() {
-  const [sample, setSample] = useState<DrivingSample | null>(null);
-  const [path, setPath] = useState<{ lat: number; lng: number }[]>([]);
-
+  const [eta, setEta] = useState(360);
   useEffect(() => {
-    const stop = watchDriving((s) => {
-      setSample(s);
-      setPath((p) => {
-        const last = p[p.length - 1];
-        if (last && Math.abs(last.lat - s.lat) < 0.00002 && Math.abs(last.lng - s.lng) < 0.00002) return p;
-        const next = [...p, { lat: s.lat, lng: s.lng }];
-        return next.length > 60 ? next.slice(-60) : next;
-      });
-    });
-    return stop;
+    const i = setInterval(() => setEta((s) => Math.max(0, s - 1)), 1000);
+    return () => clearInterval(i);
   }, []);
-
-  const center = sample ? { lat: sample.lat, lng: sample.lng } : null;
-
-  const nearest = useMemo(() => {
-    if (!center) return null;
-    return [...HOSPITALS]
-      .map((h) => ({ ...h, dist: distanceKm(center, { lat: h.lat, lng: h.lng }) }))
-      .sort((a, b) => a.dist - b.dist)[0];
-  }, [center]);
-
-  const markers = useMemo(() => {
-    const m: { lat: number; lng: number; label?: string; color?: "red" | "blue" | "green" }[] = [];
-    if (nearest) m.push({ lat: nearest.lat, lng: nearest.lng, label: nearest.name, color: "green" });
-    path.forEach((p, i) => i % 4 === 0 && m.push({ lat: p.lat, lng: p.lng, color: "blue" }));
-    return m;
-  }, [nearest, path]);
-
-  const moving = (sample?.speedKmh ?? 0) > 3;
-  const user = getUser();
+  const m = Math.floor(eta / 60), s = eta % 60;
 
   return (
     <MobileShell title="Live Rescue Tracking" back="/dashboard">
-      {/* Real-time map */}
-      <div className="mt-2">
-        <LiveMap center={center} markers={markers} height={300} />
+      {/* Map */}
+      <div className="relative mt-2 h-72 rounded-3xl overflow-hidden glass">
+        <div className="absolute inset-0 grid-bg opacity-60" />
+        <div className="absolute inset-0 bg-gradient-to-b from-ai/10 to-transparent" />
+        {/* Route path */}
+        <svg viewBox="0 0 400 300" className="absolute inset-0 w-full h-full" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="rt" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stopColor="oklch(0.78 0.18 230)" />
+              <stop offset="100%" stopColor="oklch(0.62 0.27 22)" />
+            </linearGradient>
+          </defs>
+          <path d="M40 250 Q120 200 160 160 T280 80 L360 40" stroke="url(#rt)" strokeWidth="4" fill="none" strokeDasharray="8 8" className="animate-[shimmer_2s_linear_infinite]" />
+          <path d="M40 250 Q120 200 160 160 T280 80 L360 40" stroke="oklch(0.82 0.16 200 / 30%)" strokeWidth="14" fill="none" />
+        </svg>
+        {/* Hospital marker */}
+        <div className="absolute top-4 right-4 flex flex-col items-center">
+          <div className="h-10 w-10 rounded-2xl bg-success flex items-center justify-center glow-cyan">
+            <Hospital className="h-5 w-5 text-white" />
+          </div>
+          <span className="mt-1 text-[10px] font-medium glass px-2 py-0.5 rounded-full">Apollo</span>
+        </div>
+        {/* Ambulance moving */}
+        <div className="absolute left-1/3 top-1/2 animate-float">
+          <div className="absolute inset-0 -m-3 rounded-full bg-emergency/40 animate-ripple" />
+          <div className="relative h-12 w-12 rounded-2xl bg-gradient-emergency flex items-center justify-center glow-red">
+            <Ambulance className="h-6 w-6 text-white" />
+          </div>
+        </div>
+        {/* User marker */}
+        <div className="absolute bottom-6 left-6 flex flex-col items-center">
+          <div className="h-10 w-10 rounded-full bg-ai flex items-center justify-center glow-blue">
+            <span className="h-3 w-3 rounded-full bg-white animate-pulse" />
+          </div>
+          <span className="mt-1 text-[10px] font-medium glass px-2 py-0.5 rounded-full">You</span>
+        </div>
       </div>
 
-      {/* Live driving stats */}
-      <div className="mt-4 grid grid-cols-3 gap-2">
-        <div className="glass rounded-2xl p-3">
-          <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-widest text-muted-foreground">
-            <Gauge className="h-3 w-3" /> Speed
-          </div>
-          <p className="mt-1 text-2xl font-bold tabular-nums text-gradient-ai">{sample?.speedKmh ?? 0}<span className="text-[10px] text-muted-foreground ml-1">km/h</span></p>
-        </div>
-        <div className="glass rounded-2xl p-3">
-          <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-widest text-muted-foreground">
-            <Compass className="h-3 w-3" /> Heading
-          </div>
-          <p className="mt-1 text-2xl font-bold">{dirLabel(sample?.heading ?? null)}</p>
-        </div>
-        <div className="glass rounded-2xl p-3">
-          <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-widest text-muted-foreground">
-            <MapPin className="h-3 w-3" /> Status
-          </div>
-          <p className={`mt-1 text-sm font-bold ${moving ? "text-success" : "text-warning"}`}>{moving ? "Moving" : "Stationary"}</p>
-        </div>
-      </div>
-
-      {/* GPS coords */}
-      {center && (
-        <div className="mt-3 glass rounded-2xl px-4 py-2.5 text-[11px] text-muted-foreground flex items-center justify-between">
-          <span><MapPin className="inline h-3 w-3 mr-1" />{center.lat.toFixed(5)}°, {center.lng.toFixed(5)}°</span>
-          <span>{path.length} pts</span>
-        </div>
-      )}
-
-      {/* Golden hour */}
+      {/* Golden Hour */}
       <div className="mt-4 relative overflow-hidden rounded-2xl bg-gradient-to-r from-warning/30 to-emergency/30 border border-warning/40 p-4">
+        <div className="absolute inset-0 grid-bg opacity-30" />
         <div className="relative flex items-center gap-3">
           <div className="h-10 w-10 rounded-full bg-warning flex items-center justify-center">
             <Clock className="h-5 w-5 text-background" />
@@ -106,55 +67,56 @@ function Tracking() {
         </div>
       </div>
 
-      {/* Nearest hospital */}
-      {nearest && (
-        <div className="mt-4 glass rounded-2xl p-4">
-          <p className="text-xs uppercase tracking-widest text-muted-foreground mb-2">Nearest Hospital</p>
-          <div className="flex items-center gap-3">
-            <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-success to-cyan-glow flex items-center justify-center">
-              <Hospital className="h-6 w-6 text-white" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="font-semibold truncate">{nearest.name}</p>
-              <p className="text-xs text-muted-foreground">{nearest.dist} km · ~{Math.max(3, Math.round(nearest.dist * 2.5))} min</p>
-            </div>
-          </div>
-          <div className="mt-3 grid grid-cols-2 gap-2">
-            <a href={googleMapsNav(nearest.lat, nearest.lng, nearest.name)} target="_blank" rel="noreferrer" className="py-2.5 rounded-xl bg-gradient-ai glow-blue text-xs font-semibold text-white flex items-center justify-center gap-1.5">
-              <Navigation className="h-4 w-4" /> Navigate
-            </a>
-            <a href={telLink(nearest.phone)} className="py-2.5 rounded-xl bg-success/20 text-success text-xs font-semibold flex items-center justify-center gap-1.5">
-              <Phone className="h-4 w-4" /> Call
-            </a>
-          </div>
+      {/* ETA */}
+      <div className="mt-4 glass rounded-3xl p-5 flex items-center gap-5">
+        <div className="text-center">
+          <p className="text-xs text-muted-foreground uppercase tracking-widest">ETA</p>
+          <p className="text-4xl font-bold text-gradient-ai tabular-nums">{String(m).padStart(2, "0")}:{String(s).padStart(2, "0")}</p>
         </div>
-      )}
-
-      {/* Ambulance status */}
-      <div className="mt-4 glass rounded-2xl p-4">
-        <div className="flex items-center gap-3">
-          <div className="relative h-12 w-12 rounded-2xl bg-gradient-emergency flex items-center justify-center glow-red">
-            <div className="absolute inset-0 -m-2 rounded-2xl bg-emergency/40 animate-ripple" />
-            <Ambulance className="relative h-6 w-6 text-white" />
-          </div>
-          <div className="flex-1">
-            <p className="text-sm font-semibold">Ambulance dispatch</p>
-            <p className="text-xs text-muted-foreground">Tap 108 to request immediate pickup at your live GPS</p>
-          </div>
-          <a href={telLink("108")} className="h-10 w-10 rounded-xl bg-emergency/20 text-emergency-glow flex items-center justify-center"><Phone className="h-4 w-4" /></a>
+        <div className="flex-1 h-px bg-border" />
+        <div>
+          <p className="text-xs text-muted-foreground">Distance</p>
+          <p className="text-lg font-semibold">2.4 km</p>
+          <p className="text-xs text-success">Traffic clear</p>
         </div>
       </div>
 
-      <a
-        href={smsLink("", buildSosMessage(center, user.name))}
-        className="mt-4 w-full py-3.5 rounded-2xl glass-strong font-medium flex items-center justify-center gap-2"
-      >
-        <Share2 className="h-4 w-4" /> Share Live Tracking
-      </a>
+      {/* Responder */}
+      <div className="mt-4 glass rounded-2xl p-4">
+        <p className="text-xs uppercase tracking-widest text-muted-foreground mb-3">Emergency Responder</p>
+        <div className="flex items-center gap-3">
+          <div className="h-12 w-12 rounded-2xl bg-gradient-ai flex items-center justify-center text-white font-semibold">RV</div>
+          <div className="flex-1">
+            <p className="text-sm font-semibold">Rajiv Verma — Paramedic</p>
+            <p className="text-xs text-muted-foreground">Apollo Ambulance · TN-09-AB-2024</p>
+          </div>
+          <button className="h-10 w-10 rounded-xl bg-success/20 text-success flex items-center justify-center"><Phone className="h-4 w-4" /></button>
+        </div>
+      </div>
 
-      <Link to="/contacts" className="mt-2 block text-center text-[11px] text-cyan-glow font-semibold">
-        Send SOS to all family contacts →
-      </Link>
+      {/* Status timeline */}
+      <div className="mt-4 glass rounded-2xl p-4 space-y-3">
+        {[
+          { t: "Now", label: "Ambulance en route", done: true, icon: Ambulance },
+          { t: "+4 min", label: "Pickup at incident location", done: false, icon: Shield },
+          { t: "+9 min", label: "Arrive at Apollo Hospital", done: false, icon: Hospital },
+        ].map((s, i) => (
+          <div key={i} className="flex items-center gap-3">
+            <div className={`h-9 w-9 rounded-xl flex items-center justify-center ${s.done ? "bg-success/20 text-success" : "glass-strong text-muted-foreground"}`}>
+              <s.icon className="h-4 w-4" />
+            </div>
+            <div className="flex-1">
+              <p className="text-sm font-medium">{s.label}</p>
+              <p className="text-xs text-muted-foreground">{s.t}</p>
+            </div>
+            {s.done && <span className="text-xs text-success">Live</span>}
+          </div>
+        ))}
+      </div>
+
+      <button className="mt-4 w-full h-13 py-3.5 rounded-2xl glass-strong font-medium flex items-center justify-center gap-2">
+        <Share2 className="h-4 w-4" /> Share Live Tracking with Family
+      </button>
     </MobileShell>
   );
 }

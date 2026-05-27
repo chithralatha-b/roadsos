@@ -24,8 +24,6 @@ function SignUp() {
       phone: `+91 ${phone}`,
       bloodGroup: blood,
       allergies: allergies || "None reported",
-      conditions: "None",
-      insurance: "Not provided",
       emergencyContact: `+91 ${contact}`,
       language: lang,
       guest: false,
