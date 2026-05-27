@@ -1,8 +1,9 @@
-import { ReactNode } from "react";
+import { ReactNode, useEffect } from "react";
 import { BottomNav } from "./BottomNav";
 import { FloatingChatbot } from "./FloatingChatbot";
 import { Link } from "@tanstack/react-router";
 import { ChevronLeft } from "lucide-react";
+import { wireDistractionDetection } from "@/lib/offline";
 
 export function MobileShell({
   children,
