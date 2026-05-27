@@ -124,6 +124,8 @@ export type User = {
   phone: string;
   bloodGroup: string;
   allergies: string;
+  conditions: string;
+  insurance: string;
   emergencyContact: string;
   language: "English" | "தமிழ்" | "हिन्दी";
   guest: boolean;
@@ -135,6 +137,8 @@ const GUEST: User = {
   phone: "+91 00000 00000",
   bloodGroup: "Unknown",
   allergies: "None on file",
+  conditions: "None",
+  insurance: "Not provided",
   emergencyContact: "+91 00000 00000",
   language: "English",
   guest: true,
