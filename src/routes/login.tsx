@@ -88,6 +88,11 @@ function Login() {
         <button onClick={() => navigate({ to: "/dashboard" })} className="w-full py-3.5 rounded-2xl glass-strong font-medium flex items-center justify-center gap-2">
           <Fingerprint className="h-5 w-5 text-cyan-glow" /> Biometric Login
         </button>
+
+        <button onClick={() => navigate({ to: "/dashboard" })} className="w-full py-3 rounded-2xl glass font-medium text-sm">
+          Continue as Guest →
+        </button>
+        <p className="text-[11px] text-muted-foreground text-center -mt-2">All emergency features work without signing in.</p>
       </div>
 
       <div className="relative z-10 mt-auto pt-8 flex justify-center gap-2 text-xs text-muted-foreground">
