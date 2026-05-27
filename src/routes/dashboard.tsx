@@ -86,15 +86,16 @@ function Dashboard() {
           </div>
         </div>
         {/* Quick dial emergency */}
-        <div className="relative mt-4 grid grid-cols-3 gap-2">
+        <div className="relative mt-4 grid grid-cols-4 gap-2">
           {[
+            { n: "100", l: "Police", c: "bg-purple-glow/20 text-purple-glow", href: telLink(EMERGENCY_NUMBERS.police) },
             { n: "108", l: "Ambulance", c: "bg-emergency/20 text-emergency-glow", href: telLink(EMERGENCY_NUMBERS.ambulance) },
             { n: "112", l: "Emergency", c: "bg-ai/20 text-cyan-glow", href: telLink(EMERGENCY_NUMBERS.unified) },
-            { n: "100", l: "Police", c: "bg-purple-glow/20 text-purple-glow", href: telLink(EMERGENCY_NUMBERS.police) },
+            { n: "1033", l: "Highway", c: "bg-warning/20 text-warning", href: telLink(EMERGENCY_NUMBERS.highway) },
           ].map((b) => (
             <a key={b.n} href={b.href} className={`py-2 rounded-xl ${b.c} text-center`}>
-              <p className="text-base font-bold">{b.n}</p>
-              <p className="text-[10px]">{b.l}</p>
+              <p className="text-sm font-bold">{b.n}</p>
+              <p className="text-[9px]">{b.l}</p>
             </a>
           ))}
         </div>
