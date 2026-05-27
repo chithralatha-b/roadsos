@@ -172,35 +172,22 @@ function Dashboard() {
         </Link>
       </div>
       <div className="space-y-2">
-        {[
-          { name: "Mom", num: "+91 98765 ••••", color: "bg-emergency", href: telLink("+919876512345") },
-          { name: "Dr. Kumar", num: "Family Doctor", color: "bg-ai", href: telLink("+919840098765") },
-        ].map((c) => (
-          <div key={c.name} className="glass rounded-2xl px-4 py-3 flex items-center gap-3">
-            <div className={`h-10 w-10 rounded-full ${c.color} flex items-center justify-center text-white font-semibold`}>{c.name[0]}</div>
-            <div className="flex-1">
-              <p className="text-sm font-medium">{c.name}</p>
-              <p className="text-xs text-muted-foreground">{c.num}</p>
+        {getContacts().slice(0, 3).map((c) => {
+          const lastLoc = loc ? { lat: loc.lat, lng: loc.lng } : null;
+          const sosMsg = buildSosMessage(lastLoc, user?.name);
+          return (
+            <div key={c.id} className="glass rounded-2xl px-4 py-3 flex items-center gap-3">
+              <div className="h-10 w-10 rounded-full bg-gradient-emergency flex items-center justify-center text-white font-semibold">{c.name[0]}</div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium truncate">{c.name}</p>
+                <p className="text-xs text-muted-foreground truncate">{c.relation || "Contact"}</p>
+              </div>
+              <a href={smsLink(c.phone, sosMsg)} className="px-2.5 h-9 rounded-xl bg-emergency/20 text-emergency-glow flex items-center text-[10px] font-bold gap-1">SOS</a>
+              <a href={telLink(c.phone)} className="h-9 w-9 rounded-xl bg-success/20 text-success flex items-center justify-center"><Phone className="h-4 w-4" /></a>
             </div>
-            <a href={c.href} className="h-9 w-9 rounded-xl bg-success/20 text-success flex items-center justify-center"><Phone className="h-4 w-4" /></a>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </MobileShell>
-  );
-}
-
-function ScoreCard({ icon: Icon, label, value, max, tint }: any) {
-  return (
-    <div className="glass rounded-2xl p-4 relative overflow-hidden">
-      <div className={`absolute -bottom-8 -right-8 h-24 w-24 rounded-full ${tint === "ai" ? "bg-ai/20" : "bg-success/20"} blur-xl`} />
-      <div className="relative flex items-center gap-2 text-muted-foreground text-xs">
-        <Icon className="h-4 w-4" /> {label}
-      </div>
-      <div className="relative mt-2 flex items-baseline gap-1">
-        <span className={`text-3xl font-bold ${tint === "ai" ? "text-gradient-ai" : "text-success"}`}>{value}</span>
-        {max && <span className="text-xs text-muted-foreground">/ {max}</span>}
-      </div>
-    </div>
   );
 }
