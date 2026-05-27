@@ -18,8 +18,10 @@ export function MobileShell({
   hideNav?: boolean;
   actions?: ReactNode;
 }) {
+  useEffect(() => { wireDistractionDetection(); }, []);
   return (
     <div className="relative mx-auto min-h-screen w-full max-w-md overflow-hidden">
+
       {/* Ambient glows */}
       <div className="pointer-events-none fixed inset-0 z-0">
         <div className="absolute -top-40 -left-20 h-80 w-80 rounded-full bg-ai/20 animate-glow" />
