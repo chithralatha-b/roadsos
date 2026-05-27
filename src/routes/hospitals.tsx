@@ -1,7 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { MobileShell } from "@/components/MobileShell";
-import { Hospital, Navigation, BedDouble, Droplet, Star, Phone } from "lucide-react";
-import { useEffect, useState } from "react";
+import { LiveMap } from "@/components/LiveMap";
+import { Hospital, Navigation, BedDouble, Droplet, Star, Phone, Truck, Ambulance, Wrench } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 import { HOSPITALS, getLastLocation, requestLocation, distanceKm, googleMapsNav, telLink, type LastLocation } from "@/lib/offline";
 
 export const Route = createFileRoute("/hospitals")({ component: Hospitals });
