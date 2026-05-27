@@ -2,9 +2,9 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { MobileShell } from "@/components/MobileShell";
 import { LiveMap } from "@/components/LiveMap";
 import { SpeedBanner } from "@/components/SpeedBanner";
-import { Bell, MapPin, Hospital, Bot, FileText, Users, Ambulance, Brain, AlertTriangle, Cloud, Gauge, Phone, Wifi, WifiOff, UserPlus } from "lucide-react";
+import { Bell, MapPin, Hospital, Bot, FileText, Users, Ambulance, Truck, AlertTriangle, Cloud, Phone, Wifi, WifiOff, UserPlus, Shield } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-import { getUser, requestLocation, getLastLocation, EMERGENCY_NUMBERS, telLink, HOSPITALS, type User, type LastLocation } from "@/lib/offline";
+import { getUser, requestLocation, getLastLocation, getContacts, EMERGENCY_NUMBERS, telLink, smsLink, buildSosMessage, HOSPITALS, distanceKm, type User, type LastLocation } from "@/lib/offline";
 
 export const Route = createFileRoute("/dashboard")({ component: Dashboard });
 
@@ -15,8 +15,8 @@ const features = [
   { to: "/accident", icon: FileText, label: "Accident Report", color: "from-warning to-emergency", glow: "" },
   { to: "/volunteers", icon: Users, label: "Volunteer Help", color: "from-purple-glow to-ai", glow: "" },
   { to: "/tracking", icon: Ambulance, label: "Rescue Tracking", color: "from-cyan-glow to-ai", glow: "" },
-  { to: "/safety", icon: Brain, label: "Driver Safety", color: "from-purple-glow to-emergency", glow: "" },
   { to: "/risk", icon: AlertTriangle, label: "Road Risk Alerts", color: "from-warning to-purple-glow", glow: "" },
+  { to: "/contacts", icon: Users, label: "Emergency Contacts", color: "from-emergency to-ai", glow: "" },
 ];
 
 function Dashboard() {
@@ -86,15 +86,16 @@ function Dashboard() {
           </div>
         </div>
         {/* Quick dial emergency */}
-        <div className="relative mt-4 grid grid-cols-3 gap-2">
+        <div className="relative mt-4 grid grid-cols-4 gap-2">
           {[
+            { n: "100", l: "Police", c: "bg-purple-glow/20 text-purple-glow", href: telLink(EMERGENCY_NUMBERS.police) },
             { n: "108", l: "Ambulance", c: "bg-emergency/20 text-emergency-glow", href: telLink(EMERGENCY_NUMBERS.ambulance) },
             { n: "112", l: "Emergency", c: "bg-ai/20 text-cyan-glow", href: telLink(EMERGENCY_NUMBERS.unified) },
-            { n: "100", l: "Police", c: "bg-purple-glow/20 text-purple-glow", href: telLink(EMERGENCY_NUMBERS.police) },
+            { n: "1033", l: "Highway", c: "bg-warning/20 text-warning", href: telLink(EMERGENCY_NUMBERS.highway) },
           ].map((b) => (
             <a key={b.n} href={b.href} className={`py-2 rounded-xl ${b.c} text-center`}>
-              <p className="text-base font-bold">{b.n}</p>
-              <p className="text-[10px]">{b.l}</p>
+              <p className="text-sm font-bold">{b.n}</p>
+              <p className="text-[9px]">{b.l}</p>
             </a>
           ))}
         </div>
@@ -122,10 +123,20 @@ function Dashboard() {
         />
       </div>
 
-      {/* Score widgets */}
-      <div className="mt-4 grid grid-cols-2 gap-3">
-        <ScoreCard icon={Gauge} label="Safety Score" value="92" max="100" tint="ai" />
-        <ScoreCard icon={Brain} label="Readiness" value="A+" tint="success" />
+      {/* Rescue quick services */}
+      <div className="mt-4 grid grid-cols-3 gap-2">
+        <a href={telLink("1073")} className="glass rounded-2xl p-3 flex flex-col items-center gap-1 active:scale-95 transition-transform">
+          <div className="h-9 w-9 rounded-xl bg-warning/20 text-warning flex items-center justify-center"><Truck className="h-4 w-4" /></div>
+          <p className="text-[10px] font-semibold text-center leading-tight">Vehicle Rescue</p>
+        </a>
+        <a href={telLink(EMERGENCY_NUMBERS.ambulance)} className="glass rounded-2xl p-3 flex flex-col items-center gap-1 active:scale-95 transition-transform">
+          <div className="h-9 w-9 rounded-xl bg-emergency/20 text-emergency-glow flex items-center justify-center"><Ambulance className="h-4 w-4" /></div>
+          <p className="text-[10px] font-semibold text-center leading-tight">Ambulance</p>
+        </a>
+        <a href={telLink(EMERGENCY_NUMBERS.police)} className="glass rounded-2xl p-3 flex flex-col items-center gap-1 active:scale-95 transition-transform">
+          <div className="h-9 w-9 rounded-xl bg-purple-glow/20 text-purple-glow flex items-center justify-center"><Shield className="h-4 w-4" /></div>
+          <p className="text-[10px] font-semibold text-center leading-tight">Police</p>
+        </a>
       </div>
 
       {/* Live ticker */}
@@ -161,35 +172,22 @@ function Dashboard() {
         </Link>
       </div>
       <div className="space-y-2">
-        {[
-          { name: "Mom", num: "+91 98765 ••••", color: "bg-emergency", href: telLink("+919876512345") },
-          { name: "Dr. Kumar", num: "Family Doctor", color: "bg-ai", href: telLink("+919840098765") },
-        ].map((c) => (
-          <div key={c.name} className="glass rounded-2xl px-4 py-3 flex items-center gap-3">
-            <div className={`h-10 w-10 rounded-full ${c.color} flex items-center justify-center text-white font-semibold`}>{c.name[0]}</div>
-            <div className="flex-1">
-              <p className="text-sm font-medium">{c.name}</p>
-              <p className="text-xs text-muted-foreground">{c.num}</p>
+        {getContacts().slice(0, 3).map((c) => {
+          const lastLoc = loc ? { lat: loc.lat, lng: loc.lng } : null;
+          const sosMsg = buildSosMessage(lastLoc, user?.name);
+          return (
+            <div key={c.id} className="glass rounded-2xl px-4 py-3 flex items-center gap-3">
+              <div className="h-10 w-10 rounded-full bg-gradient-emergency flex items-center justify-center text-white font-semibold">{c.name[0]}</div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium truncate">{c.name}</p>
+                <p className="text-xs text-muted-foreground truncate">{c.relation || "Contact"}</p>
+              </div>
+              <a href={smsLink(c.phone, sosMsg)} className="px-2.5 h-9 rounded-xl bg-emergency/20 text-emergency-glow flex items-center text-[10px] font-bold gap-1">SOS</a>
+              <a href={telLink(c.phone)} className="h-9 w-9 rounded-xl bg-success/20 text-success flex items-center justify-center"><Phone className="h-4 w-4" /></a>
             </div>
-            <a href={c.href} className="h-9 w-9 rounded-xl bg-success/20 text-success flex items-center justify-center"><Phone className="h-4 w-4" /></a>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </MobileShell>
-  );
-}
-
-function ScoreCard({ icon: Icon, label, value, max, tint }: any) {
-  return (
-    <div className="glass rounded-2xl p-4 relative overflow-hidden">
-      <div className={`absolute -bottom-8 -right-8 h-24 w-24 rounded-full ${tint === "ai" ? "bg-ai/20" : "bg-success/20"} blur-xl`} />
-      <div className="relative flex items-center gap-2 text-muted-foreground text-xs">
-        <Icon className="h-4 w-4" /> {label}
-      </div>
-      <div className="relative mt-2 flex items-baseline gap-1">
-        <span className={`text-3xl font-bold ${tint === "ai" ? "text-gradient-ai" : "text-success"}`}>{value}</span>
-        {max && <span className="text-xs text-muted-foreground">/ {max}</span>}
-      </div>
-    </div>
   );
 }

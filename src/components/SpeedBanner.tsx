@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { Gauge, AlertTriangle, ShieldCheck, Compass } from "lucide-react";
+import { Link } from "@tanstack/react-router";
+import { Gauge, AlertTriangle, ShieldCheck, Compass, ChevronRight } from "lucide-react";
 import { watchDriving, SPEED_LIMIT_KMH, type DrivingSample } from "@/lib/offline";
 
 const DIRS = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
@@ -15,14 +16,18 @@ export function SpeedBanner() {
 
   const speed = s?.speedKmh ?? 0;
   const over = speed > SPEED_LIMIT_KMH;
-  const status = over ? "Reduce Speed" : speed > 5 ? "Safe Speed" : "Stationary";
+  const moving = speed > 3;
+  const status = over ? "Reduce Speed" : moving ? "Safe Speed" : "Stationary · tap to view live map";
   const Icon = over ? AlertTriangle : ShieldCheck;
   const tint = over
     ? "bg-emergency/15 border-emergency/40 text-emergency-glow"
     : "bg-success/10 border-success/30 text-success";
 
   return (
-    <div className={`mt-4 rounded-2xl border glass px-4 py-3 flex items-center gap-3 ${tint}`}>
+    <Link
+      to="/tracking"
+      className={`mt-4 rounded-2xl border glass px-4 py-3 flex items-center gap-3 active:scale-[0.98] transition-transform ${tint}`}
+    >
       <div className="h-11 w-11 rounded-xl glass-strong flex items-center justify-center">
         <Gauge className="h-5 w-5" />
       </div>
@@ -39,6 +44,7 @@ export function SpeedBanner() {
           <span className="text-muted-foreground font-normal">· limit {SPEED_LIMIT_KMH} km/h</span>
         </p>
       </div>
-    </div>
+      <ChevronRight className="h-4 w-4 text-muted-foreground" />
+    </Link>
   );
 }
