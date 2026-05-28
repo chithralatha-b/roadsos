@@ -18,7 +18,6 @@ import { Route as SafetyRouteImport } from './routes/safety'
 import { Route as RiskRouteImport } from './routes/risk'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
-import { Route as LoginRouteImport } from './routes/login'
 import { Route as HospitalsRouteImport } from './routes/hospitals'
 import { Route as FamilyRouteImport } from './routes/family'
 import { Route as DashboardRouteImport } from './routes/dashboard'
@@ -73,11 +72,6 @@ const OnboardingRoute = OnboardingRouteImport.update({
   path: '/onboarding',
   getParentRoute: () => rootRouteImport,
 } as any)
-const LoginRoute = LoginRouteImport.update({
-  id: '/login',
-  path: '/login',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const HospitalsRoute = HospitalsRouteImport.update({
   id: '/hospitals',
   path: '/hospitals',
@@ -127,7 +121,6 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof DashboardRoute
   '/family': typeof FamilyRoute
   '/hospitals': typeof HospitalsRoute
-  '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRoute
   '/profile': typeof ProfileRoute
   '/risk': typeof RiskRoute
@@ -147,7 +140,6 @@ export interface FileRoutesByTo {
   '/dashboard': typeof DashboardRoute
   '/family': typeof FamilyRoute
   '/hospitals': typeof HospitalsRoute
-  '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRoute
   '/profile': typeof ProfileRoute
   '/risk': typeof RiskRoute
@@ -168,7 +160,6 @@ export interface FileRoutesById {
   '/dashboard': typeof DashboardRoute
   '/family': typeof FamilyRoute
   '/hospitals': typeof HospitalsRoute
-  '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRoute
   '/profile': typeof ProfileRoute
   '/risk': typeof RiskRoute
@@ -190,7 +181,6 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/family'
     | '/hospitals'
-    | '/login'
     | '/onboarding'
     | '/profile'
     | '/risk'
@@ -210,7 +200,6 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/family'
     | '/hospitals'
-    | '/login'
     | '/onboarding'
     | '/profile'
     | '/risk'
@@ -230,7 +219,6 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/family'
     | '/hospitals'
-    | '/login'
     | '/onboarding'
     | '/profile'
     | '/risk'
@@ -251,7 +239,6 @@ export interface RootRouteChildren {
   DashboardRoute: typeof DashboardRoute
   FamilyRoute: typeof FamilyRoute
   HospitalsRoute: typeof HospitalsRoute
-  LoginRoute: typeof LoginRoute
   OnboardingRoute: typeof OnboardingRoute
   ProfileRoute: typeof ProfileRoute
   RiskRoute: typeof RiskRoute
@@ -329,13 +316,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OnboardingRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/login': {
-      id: '/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof LoginRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/hospitals': {
       id: '/hospitals'
       path: '/hospitals'
@@ -403,7 +383,6 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardRoute: DashboardRoute,
   FamilyRoute: FamilyRoute,
   HospitalsRoute: HospitalsRoute,
-  LoginRoute: LoginRoute,
   OnboardingRoute: OnboardingRoute,
   ProfileRoute: ProfileRoute,
   RiskRoute: RiskRoute,
