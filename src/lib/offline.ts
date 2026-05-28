@@ -117,36 +117,41 @@ export function requestLocation(): Promise<LastLocation> {
   });
 }
 
-// ---- User profile (guest by default so app is usable without signup) ----
+// ---- User profile (sign-up required; no guest mode) ----
 export type User = {
   id: string;
   name: string;
   phone: string;
   bloodGroup: string;
   allergies: string;
+  insurance: string;
   emergencyContact: string;
   language: "English" | "தமிழ்" | "हिन्दी";
   guest: boolean;
+  verified: boolean;
 };
 
-const GUEST: User = {
-  id: "guest",
-  name: "Guest User",
-  phone: "+91 00000 00000",
+const EMPTY_USER: User = {
+  id: "",
+  name: "",
+  phone: "",
   bloodGroup: "Unknown",
   allergies: "None on file",
-  emergencyContact: "+91 00000 00000",
+  insurance: "Not added",
+  emergencyContact: "",
   language: "English",
   guest: true,
+  verified: false,
 };
 
 export function getUser(): User {
-  if (!isBrowser()) return GUEST;
+  if (!isBrowser()) return EMPTY_USER;
   try {
     const raw = localStorage.getItem(KEY_USER);
-    return raw ? JSON.parse(raw) : GUEST;
+    if (!raw) return EMPTY_USER;
+    return { ...EMPTY_USER, ...JSON.parse(raw) };
   } catch {
-    return GUEST;
+    return EMPTY_USER;
   }
 }
 
@@ -154,8 +159,35 @@ export function saveUser(u: User) {
   if (isBrowser()) localStorage.setItem(KEY_USER, JSON.stringify(u));
 }
 
+export function isVerified(): boolean {
+  const u = getUser();
+  return !u.guest && !!u.verified && !!u.phone;
+}
+
 export function signOut() {
   if (isBrowser()) localStorage.removeItem(KEY_USER);
+}
+
+// ---- App-usage streak (unique calendar days) ----
+const KEY_USAGE = "roadsos.usage.v1";
+function loadDays(): string[] {
+  if (!isBrowser()) return [];
+  try { return JSON.parse(localStorage.getItem(KEY_USAGE) || "[]"); } catch { return []; }
+}
+export function recordAppUsage() {
+  if (!isBrowser()) return;
+  const today = new Date().toISOString().slice(0, 10);
+  const days = loadDays();
+  if (days[days.length - 1] === today) return;
+  const next = [...days, today].slice(-60);
+  localStorage.setItem(KEY_USAGE, JSON.stringify(next));
+}
+export function getUsageStreak(): number {
+  const set = new Set(loadDays());
+  let n = 0;
+  const d = new Date();
+  while (set.has(d.toISOString().slice(0, 10))) { n++; d.setDate(d.getDate() - 1); }
+  return n;
 }
 
 // ---- Emergency contacts (with family flag) ----
