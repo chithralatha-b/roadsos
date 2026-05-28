@@ -98,7 +98,9 @@ function Dashboard() {
               <p className="text-[10px]">{b.l}</p>
             </a>
           ))}
+        </div>
       </div>
+
 
       {/* Live speed / direction banner (GPS) */}
       <SpeedBanner />
