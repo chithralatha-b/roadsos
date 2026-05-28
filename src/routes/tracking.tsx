@@ -50,7 +50,7 @@ function Tracking() {
           <div className="h-10 w-10 rounded-2xl bg-success flex items-center justify-center glow-cyan">
             <Hospital className="h-5 w-5 text-white" />
           </div>
-          <span className="mt-1 text-[10px] font-medium glass px-2 py-0.5 rounded-full">Apollo</span>
+          <span className="mt-1 text-[10px] font-medium glass px-2 py-0.5 rounded-full max-w-[120px] truncate">{nearest.name.split(" ")[0]}</span>
         </div>
         {/* Ambulance moving */}
         <div className="absolute left-1/3 top-1/2 animate-float">
