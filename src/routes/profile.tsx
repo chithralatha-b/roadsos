@@ -8,6 +8,7 @@ import { useNavigate } from "@tanstack/react-router";
 export const Route = createFileRoute("/profile")({ component: Profile });
 
 function Profile() {
+  const navigate = useNavigate();
   const [user, setUser] = useState<User | null>(null);
   const [edit, setEdit] = useState(false);
   const [draft, setDraft] = useState<User | null>(null);
