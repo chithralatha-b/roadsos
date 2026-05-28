@@ -1,9 +1,9 @@
-# 🚑 RoadSOS
+#  RoadSOS
 AI-Powered Smart Emergency Response & Road Safety System
 
 ---
 
-# 📌 Project Overview
+#  Project Overview
 
 RoadSOS is a smart road safety and emergency response application designed to assist users during accidents, emergencies, and unsafe driving situations.
 
@@ -22,7 +22,7 @@ The project is built as a smart safety ecosystem focused on improving emergency 
 
 ---
 
-# 🎯 Problem Statement
+#  Problem Statement
 
 Road accidents and emergency situations often suffer from:
 - Delayed emergency response
@@ -36,9 +36,9 @@ RoadSOS aims to solve these problems using AI assistance, live tracking, emergen
 
 ---
 
-# ✨ Features
+#  Features
 
-# 🚨 Emergency SOS System
+#  Emergency SOS System
 - One-click emergency alert
 - Sends emergency notifications
 - Shares live location
@@ -50,7 +50,7 @@ RoadSOS aims to solve these problems using AI assistance, live tracking, emergen
 
 ---
 
-# 🗺️ Live GPS & Location Tracking
+# Live GPS & Location Tracking
 - Real-time user location tracking
 - Interactive live maps
 - Movement tracking
@@ -59,7 +59,7 @@ RoadSOS aims to solve these problems using AI assistance, live tracking, emergen
 
 ---
 
-# 🚑 Nearby Hospitals
+#  Nearby Hospitals
 - Find nearest hospitals
 - Distance-based hospital listing
 - Trauma/ICU filtering
@@ -67,7 +67,7 @@ RoadSOS aims to solve these problems using AI assistance, live tracking, emergen
 
 ---
 
-# 🤖 AI First Aid Assistant
+#  AI First Aid Assistant
 - AI-powered emergency guidance
 - Basic first-aid support
 - Emergency recommendations
@@ -75,7 +75,7 @@ RoadSOS aims to solve these problems using AI assistance, live tracking, emergen
 
 ---
 
-# 🚓 Emergency Services Access
+#  Emergency Services Access
 - Quick emergency calling
 - Ambulance contact support
 - Police emergency support
@@ -83,7 +83,7 @@ RoadSOS aims to solve these problems using AI assistance, live tracking, emergen
 
 ---
 
-# 👨‍👩‍👧 Family Safety Mode
+# Family Safety Mode
 - View family member status
 - Emergency contact alerts
 - Live safety tracking
@@ -91,7 +91,7 @@ RoadSOS aims to solve these problems using AI assistance, live tracking, emergen
 
 ---
 
-# 🚗 Driver Safety Monitoring
+#  Driver Safety Monitoring
 
 The system includes smart driver safety monitoring features such as:
 
@@ -104,7 +104,7 @@ The system includes smart driver safety monitoring features such as:
 
 ---
 
-# 🏆 Safety Score & Streak System
+#  Safety Score & Streak System
 
 The application maintains a driver safety score based on:
 - Safe driving
@@ -118,7 +118,7 @@ Current values are prototype/demo-based and displayed dynamically for simulation
 
 ---
 
-# ⚠️ Road Risk Alerts
+#  Road Risk Alerts
 - Displays road safety alerts
 - Risk notifications
 - Safety warnings
@@ -126,7 +126,7 @@ Current values are prototype/demo-based and displayed dynamically for simulation
 
 ---
 
-# 🛠️ Accident Reporting
+#  Accident Reporting
 - Accident report dashboard
 - Incident details
 - Emergency submission workflow
@@ -134,7 +134,7 @@ Current values are prototype/demo-based and displayed dynamically for simulation
 
 ---
 
-# 🚨 Rescue & Volunteer Coordination
+#  Rescue & Volunteer Coordination
 - Volunteer rescue assistance
 - Vehicle rescue support
 - Rescue tracking workflow
@@ -142,7 +142,7 @@ Current values are prototype/demo-based and displayed dynamically for simulation
 
 ---
 
-# 📶 Offline Support
+#  Offline Support
 - Offline-first emergency support
 - Local data storage
 - GPS caching
@@ -150,7 +150,7 @@ Current values are prototype/demo-based and displayed dynamically for simulation
 
 ---
 
-# 🧪 Prototype Status
+#  Prototype Status
 
 Some features in the current version are implemented as:
 - UI prototypes
@@ -172,7 +172,7 @@ Future versions are planned to integrate:
 
 ---
 
-# 🛠️ Technologies Used
+#  Technologies Used
 
 ## Frontend
 - React
@@ -195,7 +195,7 @@ Future versions are planned to integrate:
 
 ---
 
-# 📂 Project Structure
+#  Project Structure
 
 ```text
 ROAD-SOS/
@@ -248,10 +248,9 @@ ROAD-SOS/
 ```
 
 ---
+#  Installation Guide
 
-# ⚙️ Installation Guide
-
-# 1️⃣ Install Node.js
+# 1️ Install Node.js
 
 Download Node.js:
 
@@ -269,7 +268,7 @@ npm -v
 
 ---
 
-# 📦 Install Dependencies
+#  Install Dependencies
 
 Open terminal inside project folder.
 
@@ -281,7 +280,7 @@ npm install
 
 ---
 
-# 🔑 Environment Variables
+#  Environment Variables
 
 Create `.env` file:
 
@@ -299,7 +298,7 @@ VITE_SUPABASE_URL=your_url
 
 ---
 
-# ▶️ Run Project
+#  Run Project
 
 ```bash
 npm run dev
@@ -313,7 +312,7 @@ http://localhost:5173
 
 ---
 
-# 🏗️ Build Project
+#  Build Project
 
 ```bash
 npm run build
@@ -321,9 +320,9 @@ npm run build
 
 ---
 
-# 🔄 Application Workflow
+#  Application Workflow
 
-# 🚨 Emergency Workflow
+#  Emergency Workflow
 
 ```text
 User Presses SOS
@@ -341,7 +340,7 @@ Nearby Help Coordinated
 
 ---
 
-# 🤖 AI Assistant Workflow
+#  AI Assistant Workflow
 
 ```text
 User Sends Emergency Query
@@ -355,7 +354,7 @@ Response Displayed To User
 
 ---
 
-# 🚗 Driver Safety Workflow
+#  Driver Safety Workflow
 
 ```text
 User Driving Activity Monitored
@@ -371,7 +370,7 @@ Safety Recommendations Generated
 
 ---
 
-# 🏥 Hospital Workflow
+#  Hospital Workflow
 
 ```text
 User Location Retrieved
@@ -385,7 +384,7 @@ Hospitals Displayed On Map
 
 ---
 
-# 🔐 Security Notes
+#  Security Notes
 
 - Do NOT upload `.env` publicly
 - Protect API keys
@@ -394,7 +393,7 @@ Hospitals Displayed On Map
 
 ---
 
-# 🚀 Future Improvements
+#  Future Improvements
 
 - Real accident detection using sensors
 - AI-based drowsiness detection
@@ -406,7 +405,7 @@ Hospitals Displayed On Map
 
 ---
 
-# 🎯 Hackathon Value
+#  Hackathon Value
 
 RoadSOS focuses on:
 - Public safety
@@ -418,7 +417,7 @@ RoadSOS focuses on:
 
 ---
 
-# 👨‍💻 Developed For
+#  Developed For
 
 - Hackathons
 - Smart City Projects
@@ -427,6 +426,6 @@ RoadSOS focuses on:
 
 ---
 
-# ⭐ Final Note
+#  Final Note
 
 RoadSOS is designed as a smart emergency and road safety ecosystem that combines AI assistance, live tracking, emergency communication, safety monitoring, and rescue coordination to improve public safety accessibility during critical situations.
