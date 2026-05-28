@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as VolunteersRouteImport } from './routes/volunteers'
+import { Route as VehicleRescueRouteImport } from './routes/vehicle-rescue'
 import { Route as TrackingRouteImport } from './routes/tracking'
 import { Route as SosRouteImport } from './routes/sos'
 import { Route as SignupRouteImport } from './routes/signup'
@@ -30,6 +31,11 @@ import { Route as ApiChatRouteImport } from './routes/api/chat'
 const VolunteersRoute = VolunteersRouteImport.update({
   id: '/volunteers',
   path: '/volunteers',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VehicleRescueRoute = VehicleRescueRouteImport.update({
+  id: '/vehicle-rescue',
+  path: '/vehicle-rescue',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TrackingRoute = TrackingRouteImport.update({
@@ -129,6 +135,7 @@ export interface FileRoutesByFullPath {
   '/signup': typeof SignupRoute
   '/sos': typeof SosRoute
   '/tracking': typeof TrackingRoute
+  '/vehicle-rescue': typeof VehicleRescueRoute
   '/volunteers': typeof VolunteersRoute
   '/api/chat': typeof ApiChatRoute
 }
@@ -148,6 +155,7 @@ export interface FileRoutesByTo {
   '/signup': typeof SignupRoute
   '/sos': typeof SosRoute
   '/tracking': typeof TrackingRoute
+  '/vehicle-rescue': typeof VehicleRescueRoute
   '/volunteers': typeof VolunteersRoute
   '/api/chat': typeof ApiChatRoute
 }
@@ -168,6 +176,7 @@ export interface FileRoutesById {
   '/signup': typeof SignupRoute
   '/sos': typeof SosRoute
   '/tracking': typeof TrackingRoute
+  '/vehicle-rescue': typeof VehicleRescueRoute
   '/volunteers': typeof VolunteersRoute
   '/api/chat': typeof ApiChatRoute
 }
@@ -189,6 +198,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/sos'
     | '/tracking'
+    | '/vehicle-rescue'
     | '/volunteers'
     | '/api/chat'
   fileRoutesByTo: FileRoutesByTo
@@ -208,6 +218,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/sos'
     | '/tracking'
+    | '/vehicle-rescue'
     | '/volunteers'
     | '/api/chat'
   id:
@@ -227,6 +238,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/sos'
     | '/tracking'
+    | '/vehicle-rescue'
     | '/volunteers'
     | '/api/chat'
   fileRoutesById: FileRoutesById
@@ -247,6 +259,7 @@ export interface RootRouteChildren {
   SignupRoute: typeof SignupRoute
   SosRoute: typeof SosRoute
   TrackingRoute: typeof TrackingRoute
+  VehicleRescueRoute: typeof VehicleRescueRoute
   VolunteersRoute: typeof VolunteersRoute
   ApiChatRoute: typeof ApiChatRoute
 }
@@ -258,6 +271,13 @@ declare module '@tanstack/react-router' {
       path: '/volunteers'
       fullPath: '/volunteers'
       preLoaderRoute: typeof VolunteersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vehicle-rescue': {
+      id: '/vehicle-rescue'
+      path: '/vehicle-rescue'
+      fullPath: '/vehicle-rescue'
+      preLoaderRoute: typeof VehicleRescueRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/tracking': {
@@ -391,6 +411,7 @@ const rootRouteChildren: RootRouteChildren = {
   SignupRoute: SignupRoute,
   SosRoute: SosRoute,
   TrackingRoute: TrackingRoute,
+  VehicleRescueRoute: VehicleRescueRoute,
   VolunteersRoute: VolunteersRoute,
   ApiChatRoute: ApiChatRoute,
 }
