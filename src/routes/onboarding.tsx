@@ -15,7 +15,7 @@ function Onboarding() {
   const navigate = useNavigate();
   const slide = slides[i];
   const Icon = slide.icon;
-  const next = () => (i < slides.length - 1 ? setI(i + 1) : navigate({ to: "/login" }));
+  const next = () => (i < slides.length - 1 ? setI(i + 1) : navigate({ to: "/signup" }));
 
   return (
     <div className="relative mx-auto min-h-screen w-full max-w-md overflow-hidden flex flex-col">
