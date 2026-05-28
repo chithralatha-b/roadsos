@@ -12,7 +12,10 @@ function Splash() {
   const [progress, setProgress] = useState(0);
   useEffect(() => {
     const i = setInterval(() => setProgress((p) => Math.min(100, p + 4)), 60);
-    const t = setTimeout(() => navigate({ to: "/onboarding" }), 2400);
+    const t = setTimeout(async () => {
+      const { isVerified } = await import("@/lib/offline");
+      navigate({ to: isVerified() ? "/dashboard" : "/onboarding", replace: true });
+    }, 2400);
     return () => { clearInterval(i); clearTimeout(t); };
   }, [navigate]);
 
