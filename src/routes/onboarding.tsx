@@ -15,7 +15,7 @@ function Onboarding() {
   const navigate = useNavigate();
   const slide = slides[i];
   const Icon = slide.icon;
-  const next = () => (i < slides.length - 1 ? setI(i + 1) : navigate({ to: "/login" }));
+  const next = () => (i < slides.length - 1 ? setI(i + 1) : navigate({ to: "/signup" }));
 
   return (
     <div className="relative mx-auto min-h-screen w-full max-w-md overflow-hidden flex flex-col">
@@ -24,7 +24,7 @@ function Onboarding() {
 
       <div className="relative z-10 flex justify-between items-center px-6 pt-6">
         <div className="text-xs tracking-widest text-muted-foreground">{String(i + 1).padStart(2, "0")} / {String(slides.length).padStart(2, "0")}</div>
-        <Link to="/login" className="text-sm text-muted-foreground hover:text-foreground">Skip</Link>
+        <Link to="/signup" className="text-sm text-muted-foreground hover:text-foreground">Skip</Link>
       </div>
 
       <div className="relative z-10 flex-1 flex flex-col items-center justify-center px-8 text-center animate-fade-up" key={i}>

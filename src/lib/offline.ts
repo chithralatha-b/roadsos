@@ -117,36 +117,41 @@ export function requestLocation(): Promise<LastLocation> {
   });
 }
 
-// ---- User profile (guest by default so app is usable without signup) ----
+// ---- User profile (sign-up required; no guest mode) ----
 export type User = {
   id: string;
   name: string;
   phone: string;
   bloodGroup: string;
   allergies: string;
+  insurance: string;
   emergencyContact: string;
   language: "English" | "தமிழ்" | "हिन्दी";
   guest: boolean;
+  verified: boolean;
 };
 
-const GUEST: User = {
-  id: "guest",
-  name: "Guest User",
-  phone: "+91 00000 00000",
+const EMPTY_USER: User = {
+  id: "",
+  name: "",
+  phone: "",
   bloodGroup: "Unknown",
   allergies: "None on file",
-  emergencyContact: "+91 00000 00000",
+  insurance: "Not added",
+  emergencyContact: "",
   language: "English",
   guest: true,
+  verified: false,
 };
 
 export function getUser(): User {
-  if (!isBrowser()) return GUEST;
+  if (!isBrowser()) return EMPTY_USER;
   try {
     const raw = localStorage.getItem(KEY_USER);
-    return raw ? JSON.parse(raw) : GUEST;
+    if (!raw) return EMPTY_USER;
+    return { ...EMPTY_USER, ...JSON.parse(raw) };
   } catch {
-    return GUEST;
+    return EMPTY_USER;
   }
 }
 
@@ -154,8 +159,35 @@ export function saveUser(u: User) {
   if (isBrowser()) localStorage.setItem(KEY_USER, JSON.stringify(u));
 }
 
+export function isVerified(): boolean {
+  const u = getUser();
+  return !u.guest && !!u.verified && !!u.phone;
+}
+
 export function signOut() {
   if (isBrowser()) localStorage.removeItem(KEY_USER);
+}
+
+// ---- App-usage streak (unique calendar days) ----
+const KEY_USAGE = "roadsos.usage.v1";
+function loadDays(): string[] {
+  if (!isBrowser()) return [];
+  try { return JSON.parse(localStorage.getItem(KEY_USAGE) || "[]"); } catch { return []; }
+}
+export function recordAppUsage() {
+  if (!isBrowser()) return;
+  const today = new Date().toISOString().slice(0, 10);
+  const days = loadDays();
+  if (days[days.length - 1] === today) return;
+  const next = [...days, today].slice(-60);
+  localStorage.setItem(KEY_USAGE, JSON.stringify(next));
+}
+export function getUsageStreak(): number {
+  const set = new Set(loadDays());
+  let n = 0;
+  const d = new Date();
+  while (set.has(d.toISOString().slice(0, 10))) { n++; d.setDate(d.getDate() - 1); }
+  return n;
 }
 
 // ---- Emergency contacts (with family flag) ----
@@ -354,4 +386,87 @@ export function searchFirstAid(query: string): FirstAidEntry | null {
     if (score > 0 && (!best || score > best.score)) best = { entry: e, score };
   }
   return best?.entry ?? null;
+}
+
+// ---- Vehicle Rescue / breakdown contacts (towing, mechanic, insurance roadside) ----
+export type VehicleRescueContact = {
+  id: string;
+  name: string;
+  phone: string;
+  type: "Tow" | "Mechanic" | "Insurance" | "Highway Patrol" | "Other";
+  area?: string;
+  builtin?: boolean;
+};
+
+const KEY_VR = "roadsos.vehicleRescue.v1";
+
+const BUILTIN_VR: VehicleRescueContact[] = [
+  { id: "vr-nhai", name: "NHAI Highway Helpline", phone: "1033", type: "Highway Patrol", area: "All India", builtin: true },
+  { id: "vr-allianz", name: "Allianz Roadside Assist", phone: "18002091415", type: "Insurance", area: "24x7 PAN India", builtin: true },
+  { id: "vr-bajaj", name: "Bajaj Allianz RSA", phone: "1800209737272", type: "Insurance", area: "24x7", builtin: true },
+  { id: "vr-tata", name: "TATA AIG Roadside", phone: "18002667780", type: "Insurance", area: "24x7", builtin: true },
+];
+
+export function getVehicleRescue(): VehicleRescueContact[] {
+  if (!isBrowser()) return BUILTIN_VR;
+  try {
+    const raw = localStorage.getItem(KEY_VR);
+    const custom: VehicleRescueContact[] = raw ? JSON.parse(raw) : [];
+    return [...BUILTIN_VR, ...custom];
+  } catch { return BUILTIN_VR; }
+}
+function saveCustomVR(list: VehicleRescueContact[]) {
+  if (isBrowser()) localStorage.setItem(KEY_VR, JSON.stringify(list));
+}
+export function addVehicleRescue(c: Omit<VehicleRescueContact, "id" | "builtin">): VehicleRescueContact {
+  const nc: VehicleRescueContact = { ...c, id: `vr-${Date.now()}` };
+  const customRaw = isBrowser() ? localStorage.getItem(KEY_VR) : null;
+  const custom: VehicleRescueContact[] = customRaw ? JSON.parse(customRaw) : [];
+  saveCustomVR([nc, ...custom]);
+  return nc;
+}
+export function removeVehicleRescue(id: string) {
+  const customRaw = isBrowser() ? localStorage.getItem(KEY_VR) : null;
+  const custom: VehicleRescueContact[] = customRaw ? JSON.parse(customRaw) : [];
+  saveCustomVR(custom.filter((c) => c.id !== id));
+}
+
+// ---- Road hazards (computed near a live location) ----
+export type RoadHazard = {
+  id: string;
+  title: string;
+  kind: "accident" | "flood" | "construction" | "weather" | "speedbreaker";
+  lat: number;
+  lng: number;
+  level: "High" | "Medium" | "Low" | "Watch";
+  hint: string;
+};
+
+// Real-looking hazard markers around Chennai. Filtered by distance to user.
+const SEED_HAZARDS: RoadHazard[] = [
+  { id: "h1", title: "Accident-prone junction", kind: "accident", lat: 13.0234, lng: 80.2200, level: "High", hint: "Frequent collisions reported here" },
+  { id: "h2", title: "Waterlogged stretch",     kind: "flood",        lat: 12.9750, lng: 80.2200, level: "Medium", hint: "Avoid after heavy rain" },
+  { id: "h3", title: "Active construction",     kind: "construction", lat: 13.0540, lng: 80.2470, level: "Low", hint: "Lane closures expected" },
+  { id: "h4", title: "Heavy rain expected",     kind: "weather",      lat: 13.0827, lng: 80.2707, level: "Watch", hint: "Reduce speed after 9 PM" },
+  { id: "h5", title: "Unmarked speed breakers", kind: "speedbreaker", lat: 13.0067, lng: 80.2570, level: "Low", hint: "Slow down before bridge" },
+  { id: "h6", title: "Black-spot zone",         kind: "accident",     lat: 12.9221, lng: 80.2226, level: "High", hint: "Sharp curve + poor lighting" },
+  { id: "h7", title: "Flooding risk",           kind: "flood",        lat: 13.0501, lng: 80.2065, level: "Medium", hint: "Low-lying underpass" },
+];
+
+export function hazardsNear(loc: { lat: number; lng: number } | null, radiusKm = 8): (RoadHazard & { distanceKm: number })[] {
+  if (!loc) return SEED_HAZARDS.map((h) => ({ ...h, distanceKm: 0 }));
+  return SEED_HAZARDS
+    .map((h) => ({ ...h, distanceKm: distanceKm({ lat: loc.lat, lng: loc.lng }, { lat: h.lat, lng: h.lng }) }))
+    .filter((h) => h.distanceKm <= radiusKm)
+    .sort((a, b) => a.distanceKm - b.distanceKm);
+}
+
+// ---- Live driver-safety score (derived from current speed) ----
+export function computeSafetyScore(speedKmh: number): { score: number; tier: string; tint: "success" | "warning" | "emergency" } {
+  if (speedKmh <= 5)  return { score: 96, tier: "Stationary — Safe", tint: "success" };
+  if (speedKmh <= SPEED_LIMIT_KMH * 0.7) return { score: 94, tier: "Excellent", tint: "success" };
+  if (speedKmh <= SPEED_LIMIT_KMH)       return { score: 88, tier: "Good", tint: "success" };
+  if (speedKmh <= SPEED_LIMIT_KMH + 15)  return { score: 72, tier: "Caution — Slow Down", tint: "warning" };
+  if (speedKmh <= SPEED_LIMIT_KMH + 30)  return { score: 55, tier: "Overspeeding", tint: "emergency" };
+  return { score: 35, tier: "Dangerous Speed", tint: "emergency" };
 }

@@ -2,9 +2,9 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { MobileShell } from "@/components/MobileShell";
 import { LiveMap } from "@/components/LiveMap";
 import { SpeedBanner } from "@/components/SpeedBanner";
-import { Bell, MapPin, Hospital, Bot, FileText, Users, Ambulance, Brain, AlertTriangle, Cloud, Gauge, Phone, Wifi, WifiOff, UserPlus } from "lucide-react";
+import { Bell, MapPin, Hospital, Bot, FileText, Users, Ambulance, Brain, AlertTriangle, Cloud, Gauge, Phone, Wifi, WifiOff, UserPlus, Wrench } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-import { getUser, requestLocation, getLastLocation, EMERGENCY_NUMBERS, telLink, HOSPITALS, type User, type LastLocation } from "@/lib/offline";
+import { getUser, requestLocation, getLastLocation, EMERGENCY_NUMBERS, telLink, HOSPITALS, getUsageStreak, type User, type LastLocation } from "@/lib/offline";
 
 export const Route = createFileRoute("/dashboard")({ component: Dashboard });
 
@@ -15,6 +15,7 @@ const features = [
   { to: "/accident", icon: FileText, label: "Accident Report", color: "from-warning to-emergency", glow: "" },
   { to: "/volunteers", icon: Users, label: "Volunteer Help", color: "from-purple-glow to-ai", glow: "" },
   { to: "/tracking", icon: Ambulance, label: "Rescue Tracking", color: "from-cyan-glow to-ai", glow: "" },
+  { to: "/vehicle-rescue", icon: Wrench, label: "Vehicle Rescue", color: "from-warning to-cyan-glow", glow: "" },
   { to: "/safety", icon: Brain, label: "Driver Safety", color: "from-purple-glow to-emergency", glow: "" },
   { to: "/risk", icon: AlertTriangle, label: "Road Risk Alerts", color: "from-warning to-purple-glow", glow: "" },
 ];
@@ -23,17 +24,29 @@ function Dashboard() {
   const [user, setUser] = useState<User | null>(null);
   const [loc, setLoc] = useState<LastLocation | null>(null);
   const [online, setOnline] = useState(true);
+  const [streak, setStreak] = useState(0);
+  const [liveScore, setLiveScore] = useState("92");
 
   useEffect(() => {
     setUser(getUser());
     setLoc(getLastLocation());
+    setStreak(getUsageStreak());
     setOnline(typeof navigator !== "undefined" ? navigator.onLine : true);
     requestLocation().then(setLoc).catch(() => {});
     const on = () => setOnline(true);
     const off = () => setOnline(false);
     window.addEventListener("online", on);
     window.addEventListener("offline", off);
-    return () => { window.removeEventListener("online", on); window.removeEventListener("offline", off); };
+    // Live safety score from GPS speed
+    let cancel: (() => void) | undefined;
+    import("@/lib/offline").then(({ watchDriving, computeSafetyScore }) => {
+      cancel = watchDriving((s) => setLiveScore(String(computeSafetyScore(s.speedKmh).score)));
+    });
+    return () => {
+      window.removeEventListener("online", on);
+      window.removeEventListener("offline", off);
+      cancel?.();
+    };
   }, []);
 
   const greeting = (() => {
@@ -98,13 +111,8 @@ function Dashboard() {
             </a>
           ))}
         </div>
-        {user?.guest && (
-          <div className="relative mt-3 flex items-center justify-between rounded-xl bg-cyan-glow/10 border border-cyan-glow/30 px-3 py-2">
-            <p className="text-[11px] text-cyan-glow">Using as guest — save your medical profile</p>
-            <Link to="/signup" className="text-[11px] font-bold text-cyan-glow">Sign up →</Link>
-          </div>
-        )}
       </div>
+
 
       {/* Live speed / direction banner (GPS) */}
       <SpeedBanner />
@@ -124,8 +132,8 @@ function Dashboard() {
 
       {/* Score widgets */}
       <div className="mt-4 grid grid-cols-2 gap-3">
-        <ScoreCard icon={Gauge} label="Safety Score" value="92" max="100" tint="ai" />
-        <ScoreCard icon={Brain} label="Readiness" value="A+" tint="success" />
+        <ScoreCard icon={Gauge} label="Safety Score" value={liveScore} max="100" tint="ai" />
+        <ScoreCard icon={Brain} label="Day Streak" value={String(streak)} max="" tint="success" />
       </div>
 
       {/* Live ticker */}

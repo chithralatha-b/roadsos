@@ -1,12 +1,27 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { MobileShell } from "@/components/MobileShell";
 import { Ambulance, Hospital, Shield, Clock, Phone, Share2 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { HOSPITALS, getLastLocation, requestLocation, distanceKm, telLink, type LastLocation } from "@/lib/offline";
 
 export const Route = createFileRoute("/tracking")({ component: Tracking });
 
 function Tracking() {
-  const [eta, setEta] = useState(360);
+  const [loc, setLoc] = useState<LastLocation | null>(null);
+  useEffect(() => {
+    setLoc(getLastLocation());
+    requestLocation().then(setLoc).catch(() => {});
+  }, []);
+
+  const nearest = useMemo(() => {
+    if (!loc) return HOSPITALS[0];
+    return [...HOSPITALS].sort((a, b) => distanceKm(loc, a) - distanceKm(loc, b))[0];
+  }, [loc]);
+  const distKm = loc ? distanceKm(loc, nearest) : 2.4;
+  const initialEta = Math.max(60, Math.round(distKm * 150));
+
+  const [eta, setEta] = useState(initialEta);
+  useEffect(() => { setEta(initialEta); }, [initialEta]);
   useEffect(() => {
     const i = setInterval(() => setEta((s) => Math.max(0, s - 1)), 1000);
     return () => clearInterval(i);
@@ -35,7 +50,7 @@ function Tracking() {
           <div className="h-10 w-10 rounded-2xl bg-success flex items-center justify-center glow-cyan">
             <Hospital className="h-5 w-5 text-white" />
           </div>
-          <span className="mt-1 text-[10px] font-medium glass px-2 py-0.5 rounded-full">Apollo</span>
+          <span className="mt-1 text-[10px] font-medium glass px-2 py-0.5 rounded-full max-w-[120px] truncate">{nearest.name.split(" ")[0]}</span>
         </div>
         {/* Ambulance moving */}
         <div className="absolute left-1/3 top-1/2 animate-float">

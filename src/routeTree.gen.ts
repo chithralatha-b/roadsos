@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as VolunteersRouteImport } from './routes/volunteers'
+import { Route as VehicleRescueRouteImport } from './routes/vehicle-rescue'
 import { Route as TrackingRouteImport } from './routes/tracking'
 import { Route as SosRouteImport } from './routes/sos'
 import { Route as SignupRouteImport } from './routes/signup'
@@ -18,7 +19,6 @@ import { Route as SafetyRouteImport } from './routes/safety'
 import { Route as RiskRouteImport } from './routes/risk'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
-import { Route as LoginRouteImport } from './routes/login'
 import { Route as HospitalsRouteImport } from './routes/hospitals'
 import { Route as FamilyRouteImport } from './routes/family'
 import { Route as DashboardRouteImport } from './routes/dashboard'
@@ -31,6 +31,11 @@ import { Route as ApiChatRouteImport } from './routes/api/chat'
 const VolunteersRoute = VolunteersRouteImport.update({
   id: '/volunteers',
   path: '/volunteers',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VehicleRescueRoute = VehicleRescueRouteImport.update({
+  id: '/vehicle-rescue',
+  path: '/vehicle-rescue',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TrackingRoute = TrackingRouteImport.update({
@@ -71,11 +76,6 @@ const ProfileRoute = ProfileRouteImport.update({
 const OnboardingRoute = OnboardingRouteImport.update({
   id: '/onboarding',
   path: '/onboarding',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LoginRoute = LoginRouteImport.update({
-  id: '/login',
-  path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
 const HospitalsRoute = HospitalsRouteImport.update({
@@ -127,7 +127,6 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof DashboardRoute
   '/family': typeof FamilyRoute
   '/hospitals': typeof HospitalsRoute
-  '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRoute
   '/profile': typeof ProfileRoute
   '/risk': typeof RiskRoute
@@ -136,6 +135,7 @@ export interface FileRoutesByFullPath {
   '/signup': typeof SignupRoute
   '/sos': typeof SosRoute
   '/tracking': typeof TrackingRoute
+  '/vehicle-rescue': typeof VehicleRescueRoute
   '/volunteers': typeof VolunteersRoute
   '/api/chat': typeof ApiChatRoute
 }
@@ -147,7 +147,6 @@ export interface FileRoutesByTo {
   '/dashboard': typeof DashboardRoute
   '/family': typeof FamilyRoute
   '/hospitals': typeof HospitalsRoute
-  '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRoute
   '/profile': typeof ProfileRoute
   '/risk': typeof RiskRoute
@@ -156,6 +155,7 @@ export interface FileRoutesByTo {
   '/signup': typeof SignupRoute
   '/sos': typeof SosRoute
   '/tracking': typeof TrackingRoute
+  '/vehicle-rescue': typeof VehicleRescueRoute
   '/volunteers': typeof VolunteersRoute
   '/api/chat': typeof ApiChatRoute
 }
@@ -168,7 +168,6 @@ export interface FileRoutesById {
   '/dashboard': typeof DashboardRoute
   '/family': typeof FamilyRoute
   '/hospitals': typeof HospitalsRoute
-  '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRoute
   '/profile': typeof ProfileRoute
   '/risk': typeof RiskRoute
@@ -177,6 +176,7 @@ export interface FileRoutesById {
   '/signup': typeof SignupRoute
   '/sos': typeof SosRoute
   '/tracking': typeof TrackingRoute
+  '/vehicle-rescue': typeof VehicleRescueRoute
   '/volunteers': typeof VolunteersRoute
   '/api/chat': typeof ApiChatRoute
 }
@@ -190,7 +190,6 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/family'
     | '/hospitals'
-    | '/login'
     | '/onboarding'
     | '/profile'
     | '/risk'
@@ -199,6 +198,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/sos'
     | '/tracking'
+    | '/vehicle-rescue'
     | '/volunteers'
     | '/api/chat'
   fileRoutesByTo: FileRoutesByTo
@@ -210,7 +210,6 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/family'
     | '/hospitals'
-    | '/login'
     | '/onboarding'
     | '/profile'
     | '/risk'
@@ -219,6 +218,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/sos'
     | '/tracking'
+    | '/vehicle-rescue'
     | '/volunteers'
     | '/api/chat'
   id:
@@ -230,7 +230,6 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/family'
     | '/hospitals'
-    | '/login'
     | '/onboarding'
     | '/profile'
     | '/risk'
@@ -239,6 +238,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/sos'
     | '/tracking'
+    | '/vehicle-rescue'
     | '/volunteers'
     | '/api/chat'
   fileRoutesById: FileRoutesById
@@ -251,7 +251,6 @@ export interface RootRouteChildren {
   DashboardRoute: typeof DashboardRoute
   FamilyRoute: typeof FamilyRoute
   HospitalsRoute: typeof HospitalsRoute
-  LoginRoute: typeof LoginRoute
   OnboardingRoute: typeof OnboardingRoute
   ProfileRoute: typeof ProfileRoute
   RiskRoute: typeof RiskRoute
@@ -260,6 +259,7 @@ export interface RootRouteChildren {
   SignupRoute: typeof SignupRoute
   SosRoute: typeof SosRoute
   TrackingRoute: typeof TrackingRoute
+  VehicleRescueRoute: typeof VehicleRescueRoute
   VolunteersRoute: typeof VolunteersRoute
   ApiChatRoute: typeof ApiChatRoute
 }
@@ -271,6 +271,13 @@ declare module '@tanstack/react-router' {
       path: '/volunteers'
       fullPath: '/volunteers'
       preLoaderRoute: typeof VolunteersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vehicle-rescue': {
+      id: '/vehicle-rescue'
+      path: '/vehicle-rescue'
+      fullPath: '/vehicle-rescue'
+      preLoaderRoute: typeof VehicleRescueRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/tracking': {
@@ -327,13 +334,6 @@ declare module '@tanstack/react-router' {
       path: '/onboarding'
       fullPath: '/onboarding'
       preLoaderRoute: typeof OnboardingRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/login': {
-      id: '/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/hospitals': {
@@ -403,7 +403,6 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardRoute: DashboardRoute,
   FamilyRoute: FamilyRoute,
   HospitalsRoute: HospitalsRoute,
-  LoginRoute: LoginRoute,
   OnboardingRoute: OnboardingRoute,
   ProfileRoute: ProfileRoute,
   RiskRoute: RiskRoute,
@@ -412,9 +411,20 @@ const rootRouteChildren: RootRouteChildren = {
   SignupRoute: SignupRoute,
   SosRoute: SosRoute,
   TrackingRoute: TrackingRoute,
+  VehicleRescueRoute: VehicleRescueRoute,
   VolunteersRoute: VolunteersRoute,
   ApiChatRoute: ApiChatRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

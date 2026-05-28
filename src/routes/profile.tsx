@@ -1,12 +1,14 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { MobileShell } from "@/components/MobileShell";
-import { Heart, Droplet, Pill, Shield, QrCode, ChevronRight, Settings, Globe, Eye, Volume2, Moon, Phone, Save, Pencil, Users } from "lucide-react";
+import { Heart, Droplet, Pill, Shield, ChevronRight, Settings, Globe, Eye, Volume2, Moon, Phone, Save, Pencil, Users, Wrench, LogOut } from "lucide-react";
 import { useEffect, useState } from "react";
-import { getUser, saveUser, getContacts, telLink, type User, type EmergencyContact } from "@/lib/offline";
+import { getUser, saveUser, getContacts, telLink, signOut, type User, type EmergencyContact } from "@/lib/offline";
+import { useNavigate } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/profile")({ component: Profile });
 
 function Profile() {
+  const navigate = useNavigate();
   const [user, setUser] = useState<User | null>(null);
   const [edit, setEdit] = useState(false);
   const [draft, setDraft] = useState<User | null>(null);
@@ -60,7 +62,7 @@ function Profile() {
         <InfoEdit icon={Droplet} label="Blood Group" value={draft.bloodGroup} edit={edit} onChange={(v: string) => setDraft({ ...draft, bloodGroup: v })} tint="emergency" />
         <InfoEdit icon={Pill} label="Allergies" value={draft.allergies} edit={edit} onChange={(v: string) => setDraft({ ...draft, allergies: v })} tint="purple-glow" />
         <InfoEdit icon={Heart} label="Conditions" value={"Asthma"} edit={false} tint="warning" />
-        <InfoEdit icon={Shield} label="Insurance" value={"Star Health"} edit={false} tint="ai" />
+        <InfoEdit icon={Shield} label="Insurance" value={draft.insurance} edit={edit} onChange={(v: string) => setDraft({ ...draft, insurance: v })} tint="ai" />
       </div>
 
       <div className="mt-5 mb-3 flex items-center justify-between">
@@ -103,18 +105,25 @@ function Profile() {
 
       <div className="mt-5 grid grid-cols-3 gap-3">
         <Link to="/family" className="glass rounded-2xl p-4 text-center">
-          <p className="text-xs text-muted-foreground">View as</p>
-          <p className="text-sm font-semibold mt-1">Family</p>
+          <Users className="h-5 w-5 mx-auto text-purple-glow" />
+          <p className="text-xs font-semibold mt-1">Family</p>
         </Link>
         <Link to="/contacts" className="glass rounded-2xl p-4 text-center">
-          <p className="text-xs text-muted-foreground">Manage</p>
-          <p className="text-sm font-semibold mt-1">Contacts</p>
+          <Phone className="h-5 w-5 mx-auto text-cyan-glow" />
+          <p className="text-xs font-semibold mt-1">Contacts</p>
         </Link>
-        <button className="glass rounded-2xl p-4 text-center">
-          <QrCode className="h-5 w-5 mx-auto text-cyan-glow" />
-          <p className="text-xs font-semibold mt-1">QR Card</p>
-        </button>
+        <Link to="/vehicle-rescue" className="glass rounded-2xl p-4 text-center">
+          <Wrench className="h-5 w-5 mx-auto text-warning" />
+          <p className="text-xs font-semibold mt-1">Vehicle Rescue</p>
+        </Link>
       </div>
+
+      <button
+        onClick={() => { signOut(); navigate({ to: "/signup", replace: true }); }}
+        className="mt-5 w-full py-3 rounded-2xl glass-strong text-sm font-medium flex items-center justify-center gap-2 text-emergency-glow"
+      >
+        <LogOut className="h-4 w-4" /> Sign out
+      </button>
     </MobileShell>
   );
 }

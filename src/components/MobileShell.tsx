@@ -1,8 +1,9 @@
-import { ReactNode } from "react";
+import { ReactNode, useEffect } from "react";
 import { BottomNav } from "./BottomNav";
 import { FloatingChatbot } from "./FloatingChatbot";
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { ChevronLeft } from "lucide-react";
+import { isVerified, recordAppUsage } from "@/lib/offline";
 
 export function MobileShell({
   children,
@@ -17,6 +18,17 @@ export function MobileShell({
   hideNav?: boolean;
   actions?: ReactNode;
 }) {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (!isVerified()) {
+      navigate({ to: "/signup", replace: true });
+      return;
+    }
+    recordAppUsage();
+  }, [navigate]);
+
   return (
     <div className="relative mx-auto min-h-screen w-full max-w-md overflow-hidden">
       {/* Ambient glows */}
