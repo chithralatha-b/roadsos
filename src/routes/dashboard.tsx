@@ -15,6 +15,7 @@ const features = [
   { to: "/accident", icon: FileText, label: "Accident Report", color: "from-warning to-emergency", glow: "" },
   { to: "/volunteers", icon: Users, label: "Volunteer Help", color: "from-purple-glow to-ai", glow: "" },
   { to: "/tracking", icon: Ambulance, label: "Rescue Tracking", color: "from-cyan-glow to-ai", glow: "" },
+  { to: "/vehicle-rescue", icon: Wrench, label: "Vehicle Rescue", color: "from-warning to-cyan-glow", glow: "" },
   { to: "/safety", icon: Brain, label: "Driver Safety", color: "from-purple-glow to-emergency", glow: "" },
   { to: "/risk", icon: AlertTriangle, label: "Road Risk Alerts", color: "from-warning to-purple-glow", glow: "" },
 ];
