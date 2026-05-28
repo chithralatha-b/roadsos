@@ -2,9 +2,9 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { MobileShell } from "@/components/MobileShell";
 import { LiveMap } from "@/components/LiveMap";
 import { SpeedBanner } from "@/components/SpeedBanner";
-import { Bell, MapPin, Hospital, Bot, FileText, Users, Ambulance, Brain, AlertTriangle, Cloud, Gauge, Phone, Wifi, WifiOff, UserPlus } from "lucide-react";
+import { Bell, MapPin, Hospital, Bot, FileText, Users, Ambulance, Brain, AlertTriangle, Cloud, Gauge, Phone, Wifi, WifiOff, UserPlus, Wrench } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-import { getUser, requestLocation, getLastLocation, EMERGENCY_NUMBERS, telLink, HOSPITALS, type User, type LastLocation } from "@/lib/offline";
+import { getUser, requestLocation, getLastLocation, EMERGENCY_NUMBERS, telLink, HOSPITALS, getUsageStreak, type User, type LastLocation } from "@/lib/offline";
 
 export const Route = createFileRoute("/dashboard")({ component: Dashboard });
 
