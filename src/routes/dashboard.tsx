@@ -120,8 +120,8 @@ function Dashboard() {
 
       {/* Score widgets */}
       <div className="mt-4 grid grid-cols-2 gap-3">
-        <ScoreCard icon={Gauge} label="Safety Score" value="92" max="100" tint="ai" />
-        <ScoreCard icon={Brain} label="Readiness" value="A+" tint="success" />
+        <ScoreCard icon={Gauge} label="Safety Score" value={liveScore} max="100" tint="ai" />
+        <ScoreCard icon={Brain} label="Day Streak" value={String(streak)} max="" tint="success" />
       </div>
 
       {/* Live ticker */}
