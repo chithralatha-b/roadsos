@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { Phone, Shield, Fingerprint, ArrowRight } from "lucide-react";
+import { Phone, Shield, Fingerprint } from "lucide-react";
 import { getUser, saveUser } from "@/lib/offline";
 
 export const Route = createFileRoute("/signin")({ component: SignIn });
@@ -11,8 +11,8 @@ function SignIn() {
 
   const handleSignIn = () => {
     const existing = getUser();
-    saveUser({ ...existing, phone: `+91 ${phone}`, guest: false });
-    navigate({ to: "/dashboard" });
+    saveUser({ ...existing, phone: `+91 ${phone}`, guest: false, verified: true });
+    navigate({ to: "/dashboard", replace: true });
   };
 
   return (
@@ -51,25 +51,9 @@ function SignIn() {
           Sign In
         </button>
 
-        <button onClick={() => navigate({ to: "/dashboard" })} className="w-full py-3.5 rounded-2xl glass-strong font-medium flex items-center justify-center gap-2">
+        <button onClick={handleSignIn} disabled={phone.length !== 10} className="w-full py-3.5 rounded-2xl glass-strong font-medium flex items-center justify-center gap-2 disabled:opacity-40">
           <Fingerprint className="h-5 w-5 text-cyan-glow" /> Biometric Login
         </button>
-
-        <div className="flex items-center gap-3">
-          <div className="flex-1 h-px bg-border" />
-          <span className="text-xs text-muted-foreground">or</span>
-          <div className="flex-1 h-px bg-border" />
-        </div>
-
-        <button
-          onClick={() => navigate({ to: "/dashboard" })}
-          className="w-full py-3.5 rounded-2xl glass font-medium flex items-center justify-center gap-2 text-sm"
-        >
-          Continue as Guest <ArrowRight className="h-4 w-4" />
-        </button>
-        <p className="text-[11px] text-muted-foreground text-center -mt-2">
-          All emergency features work without an account.
-        </p>
       </div>
 
       <p className="relative z-10 text-center text-sm text-muted-foreground mt-6">
