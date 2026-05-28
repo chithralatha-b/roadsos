@@ -24,17 +24,29 @@ function Dashboard() {
   const [user, setUser] = useState<User | null>(null);
   const [loc, setLoc] = useState<LastLocation | null>(null);
   const [online, setOnline] = useState(true);
+  const [streak, setStreak] = useState(0);
+  const [liveScore, setLiveScore] = useState("92");
 
   useEffect(() => {
     setUser(getUser());
     setLoc(getLastLocation());
+    setStreak(getUsageStreak());
     setOnline(typeof navigator !== "undefined" ? navigator.onLine : true);
     requestLocation().then(setLoc).catch(() => {});
     const on = () => setOnline(true);
     const off = () => setOnline(false);
     window.addEventListener("online", on);
     window.addEventListener("offline", off);
-    return () => { window.removeEventListener("online", on); window.removeEventListener("offline", off); };
+    // Live safety score from GPS speed
+    let cancel: (() => void) | undefined;
+    import("@/lib/offline").then(({ watchDriving, computeSafetyScore }) => {
+      cancel = watchDriving((s) => setLiveScore(String(computeSafetyScore(s.speedKmh).score)));
+    });
+    return () => {
+      window.removeEventListener("online", on);
+      window.removeEventListener("offline", off);
+      cancel?.();
+    };
   }, []);
 
   const greeting = (() => {
