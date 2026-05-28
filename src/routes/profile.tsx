@@ -1,8 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { MobileShell } from "@/components/MobileShell";
-import { Heart, Droplet, Pill, Shield, QrCode, ChevronRight, Settings, Globe, Eye, Volume2, Moon, Phone, Save, Pencil, Users } from "lucide-react";
+import { Heart, Droplet, Pill, Shield, ChevronRight, Settings, Globe, Eye, Volume2, Moon, Phone, Save, Pencil, Users, Wrench, LogOut } from "lucide-react";
 import { useEffect, useState } from "react";
-import { getUser, saveUser, getContacts, telLink, type User, type EmergencyContact } from "@/lib/offline";
+import { getUser, saveUser, getContacts, telLink, signOut, type User, type EmergencyContact } from "@/lib/offline";
+import { useNavigate } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/profile")({ component: Profile });
 
