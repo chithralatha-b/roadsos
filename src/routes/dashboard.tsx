@@ -98,13 +98,6 @@ function Dashboard() {
               <p className="text-[10px]">{b.l}</p>
             </a>
           ))}
-        </div>
-        {user?.guest && (
-          <div className="relative mt-3 flex items-center justify-between rounded-xl bg-cyan-glow/10 border border-cyan-glow/30 px-3 py-2">
-            <p className="text-[11px] text-cyan-glow">Using as guest — save your medical profile</p>
-            <Link to="/signup" className="text-[11px] font-bold text-cyan-glow">Sign up →</Link>
-          </div>
-        )}
       </div>
 
       {/* Live speed / direction banner (GPS) */}
