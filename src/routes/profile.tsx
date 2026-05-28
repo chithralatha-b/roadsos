@@ -104,18 +104,25 @@ function Profile() {
 
       <div className="mt-5 grid grid-cols-3 gap-3">
         <Link to="/family" className="glass rounded-2xl p-4 text-center">
-          <p className="text-xs text-muted-foreground">View as</p>
-          <p className="text-sm font-semibold mt-1">Family</p>
+          <Users className="h-5 w-5 mx-auto text-purple-glow" />
+          <p className="text-xs font-semibold mt-1">Family</p>
         </Link>
         <Link to="/contacts" className="glass rounded-2xl p-4 text-center">
-          <p className="text-xs text-muted-foreground">Manage</p>
-          <p className="text-sm font-semibold mt-1">Contacts</p>
+          <Phone className="h-5 w-5 mx-auto text-cyan-glow" />
+          <p className="text-xs font-semibold mt-1">Contacts</p>
         </Link>
-        <button className="glass rounded-2xl p-4 text-center">
-          <QrCode className="h-5 w-5 mx-auto text-cyan-glow" />
-          <p className="text-xs font-semibold mt-1">QR Card</p>
-        </button>
+        <Link to="/vehicle-rescue" className="glass rounded-2xl p-4 text-center">
+          <Wrench className="h-5 w-5 mx-auto text-warning" />
+          <p className="text-xs font-semibold mt-1">Vehicle Rescue</p>
+        </Link>
       </div>
+
+      <button
+        onClick={() => { signOut(); navigate({ to: "/signup", replace: true }); }}
+        className="mt-5 w-full py-3 rounded-2xl glass-strong text-sm font-medium flex items-center justify-center gap-2 text-emergency-glow"
+      >
+        <LogOut className="h-4 w-4" /> Sign out
+      </button>
     </MobileShell>
   );
 }
